@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -6,34 +7,40 @@ import FarmStay from './components/FarmStay';
 import About from './components/About';
 import Contact from './components/Contact';
 import Blogs from './components/Blogs';
+import Cart from './components/Cart';
+import Payment from './components/Payment';
 import Footer from './components/Footer';
+import { useState } from 'react';
 
-function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState('home');
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'products':
-        return <Products />;
-      case 'farmstay':
-        return <FarmStay />;
-      case 'about':
-        return <About />;
-      case 'blogs':
-        return <Blogs />;
-      case 'contact':
-        return <Contact />;
-      default:
-        return <Hero setCurrentPage={setCurrentPage} />;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#F5EFE0]">
       <Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      {renderPage()}
+      <Routes>
+        <Route path="/" element={<Hero setCurrentPage={setCurrentPage} />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/farmstay" element={<FarmStay />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
+    </Router>
   );
 }
 

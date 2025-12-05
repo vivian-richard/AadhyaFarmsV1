@@ -1,7 +1,10 @@
-import { ShoppingCart, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Search, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
+import { useCart } from '../context/CartContext';
 
 export default function Products() {
+  const { addItem } = useCart();
+  const [addedToCart, setAddedToCart] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('name');
@@ -372,9 +375,35 @@ export default function Products() {
                   <span className="text-[#7A5C3C]">{product.unit}</span>
                 </div>
                 <p className="text-[#7A5C3C] leading-relaxed mb-6">{product.description}</p>
-                <button className="w-full bg-[#2D5016] text-[#F5EFE0] py-3 rounded-lg font-semibold hover:bg-[#3D6020] transition-all duration-300 flex items-center justify-center space-x-2">
-                  <ShoppingCart className="h-5 w-5" />
-                  <span>Order Now</span>
+                <button 
+                  onClick={() => {
+                    addItem({
+                      id: product.name.toLowerCase().replace(/\s+/g, '-'),
+                      name: product.name,
+                      price: product.price,
+                      image: product.image,
+                      category: product.category,
+                    });
+                    setAddedToCart(product.name);
+                    setTimeout(() => setAddedToCart(null), 2000);
+                  }}
+                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+                    addedToCart === product.name
+                      ? 'bg-green-600 text-white'
+                      : 'bg-[#2D5016] text-[#F5EFE0] hover:bg-[#3D6020]'
+                  }`}
+                >
+                  {addedToCart === product.name ? (
+                    <>
+                      <Check className="h-5 w-5" />
+                      <span>Added to Cart</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="h-5 w-5" />
+                      <span>Add to Cart</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>

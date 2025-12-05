@@ -1,28 +1,39 @@
-import { Phone, Mail, Menu, X } from 'lucide-react';
+import { Phone, Mail, Menu, X, ShoppingCart } from 'lucide-react';
+import { useState } from 'react';
+import { useCart } from '../context/CartContext';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   currentPage: string;
   setCurrentPage: (page: string) => void;
 }
 
-import { useState } from 'react';
-
 export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { totalItems } = useCart();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'products', label: 'Products' },
-    { id: 'farmstay', label: 'Farm Stay' },
-    { id: 'blogs', label: 'Blogs' },
-    { id: 'about', label: 'About Us' },
-    { id: 'contact', label: 'Contact' },
+    { id: 'home', label: 'Home', path: '/' },
+    { id: 'products', label: 'Products', path: '/products' },
+    { id: 'farmstay', label: 'Farm Stay', path: '/farmstay' },
+    { id: 'blogs', label: 'Blogs', path: '/blogs' },
+    { id: 'about', label: 'About Us', path: '/about' },
+    { id: 'contact', label: 'Contact', path: '/contact' },
   ];
+
+  const handleNavigation = (path: string, id: string) => {
+    navigate(path);
+    setCurrentPage(id);
+  };
 
   return (
     <header className="bg-[#2D5016] text-[#F5EFE0] shadow-lg">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div
+          <Link
+            to="/"
             className="cursor-pointer transition-transform hover:scale-105"
             onClick={() => setCurrentPage('home')}
           >
@@ -31,15 +42,15 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
               alt="Aadhya Farms"
               className="hidden md:block md:h-28 lg:h-32 w-auto transition-all"
             />
-          </div>
+          </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setCurrentPage(item.id)}
+                onClick={() => handleNavigation(item.path, item.id)}
                 className={`text-lg font-semibold transition-all duration-300 hover:text-[#D4AF37] ${
-                  currentPage === item.id ? 'text-[#D4AF37] border-b-2 border-[#D4AF37]' : ''
+                  location.pathname === item.path ? 'text-[#D4AF37] border-b-2 border-[#D4AF37]' : ''
                 }`}
               >
                 {item.label}
@@ -47,11 +58,22 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-6">
             <a href="tel:+918332090317" className="flex items-center space-x-2 hover:text-[#D4AF37] transition-colors">
               <Phone className="h-5 w-5" />
               <span>+91 8332090317</span>
             </a>
+            <Link 
+              to="/cart" 
+              className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
+            >
+              <ShoppingCart className="h-6 w-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
 
@@ -74,11 +96,11 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
                 <button
                   key={item.id}
                   onClick={() => {
-                    setCurrentPage(item.id);
+                    handleNavigation(item.path, item.id);
                     setMobileOpen(false);
                   }}
                   className={`text-left px-6 py-4 text-sm font-semibold transition-colors hover:bg-[#3D6020] ${
-                    currentPage === item.id ? 'text-[#D4AF37]' : 'text-[#F5EFE0]'
+                    location.pathname === item.path ? 'text-[#D4AF37]' : 'text-[#F5EFE0]'
                   }`}
                 >
                   {item.label}
@@ -92,6 +114,21 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
                 <Phone className="h-5 w-5" />
                 <span>Call: +91 8332090317</span>
               </a>
+              <Link
+                to="/cart"
+                className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
+                onClick={() => setMobileOpen(false)}
+              >
+                <div className="flex items-center space-x-2">
+                  <ShoppingCart className="h-5 w-5" />
+                  <span>Cart</span>
+                </div>
+                {totalItems > 0 && (
+                  <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-1">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
             </nav>
           </div>
         )}
