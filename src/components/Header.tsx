@@ -20,6 +20,7 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
     { id: 'home', label: 'Home', path: '/' },
     { id: 'products', label: 'Products', path: '/products' },
     { id: 'subscriptions', label: 'Subscriptions', path: '/subscriptions' },
+    { id: 'gifts', label: 'Gifts', path: '/gifts' },
     { id: 'rewards', label: 'Rewards', path: '/rewards' },
     { id: 'farmstay', label: 'Farm Stay', path: '/farmstay' },
     { id: 'blogs', label: 'Blogs', path: '/blogs' },

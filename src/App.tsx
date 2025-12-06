@@ -8,6 +8,7 @@ import { SubscriptionProvider } from './context/SubscriptionContext';
 import { ProductProvider } from './context/ProductContext';
 import { BlogProvider } from './context/BlogContext';
 import { ReferralProvider } from './context/ReferralContext';
+import { GiftProvider } from './context/GiftContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -27,6 +28,7 @@ import Profile from './components/Profile';
 import Subscriptions from './components/Subscriptions';
 import NewSubscription from './components/NewSubscription';
 import ReferralRewards from './components/ReferralRewards';
+import GiftsHampers from './components/GiftsHampers';
 import NewsletterPopup from './components/NewsletterPopup';
 import WhatsAppButton from './components/WhatsAppButton';
 import BackToTop from './components/BackToTop';
@@ -58,6 +60,7 @@ function AppContent() {
         <Route path="/subscriptions" element={<Subscriptions />} />
         <Route path="/new-subscription" element={<NewSubscription />} />
         <Route path="/rewards" element={<ReferralRewards />} />
+        <Route path="/gifts" element={<GiftsHampers />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <NewsletterPopup />
@@ -75,7 +78,8 @@ function App() {
         <BlogProvider>
           <AuthProvider>
             <ReferralProvider>
-              <SubscriptionProvider>
+              <GiftProvider>
+                <SubscriptionProvider>
                 <RecentlyViewedProvider>
                   <WishlistProvider>
                     <CouponProvider>
@@ -85,7 +89,8 @@ function App() {
                     </CouponProvider>
                   </WishlistProvider>
                 </RecentlyViewedProvider>
-              </SubscriptionProvider>
+                </SubscriptionProvider>
+              </GiftProvider>
             </ReferralProvider>
           </AuthProvider>
         </BlogProvider>
