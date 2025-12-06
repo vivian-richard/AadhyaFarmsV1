@@ -1,9 +1,11 @@
-import { ShoppingCart, Search, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ShoppingCart, Search, ChevronLeft, ChevronRight, Check, Heart } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 export default function Products() {
   const { addItem } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [addedToCart, setAddedToCart] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -364,6 +366,33 @@ export default function Products() {
                   alt={product.name}
                   className="h-48 w-auto object-contain relative z-10"
                 />
+                {/* Wishlist Button */}
+                <button
+                  onClick={() => {
+                    const productId = product.name.toLowerCase().replace(/\s+/g, '-');
+                    if (isInWishlist(productId)) {
+                      removeFromWishlist(productId);
+                    } else {
+                      addToWishlist({
+                        id: productId,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        category: product.category,
+                      });
+                    }
+                  }}
+                  className="absolute top-4 right-4 z-20 bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
+                  aria-label="Add to wishlist"
+                >
+                  <Heart
+                    className={`h-6 w-6 ${
+                      isInWishlist(product.name.toLowerCase().replace(/\s+/g, '-'))
+                        ? 'fill-red-500 text-red-500'
+                        : 'text-gray-400'
+                    }`}
+                  />
+                </button>
               </div>
               <div className="p-6">
                 <div className="inline-block px-3 py-1 bg-[#F5EFE0] text-[#2D5016] rounded-full text-xs font-bold mb-3">

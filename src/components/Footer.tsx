@@ -20,28 +20,33 @@ export default function Footer() {
             <h3 className="text-xl font-bold mb-4 text-[#D4AF37]">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
+                <a href="/" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
                   Home
                 </a>
               </li>
               <li>
-                <a href="#" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
+                <a href="/products" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
                   Products
                 </a>
               </li>
               <li>
-                <a href="#" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
+                <a href="/recipes" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
+                  Recipes
+                </a>
+              </li>
+              <li>
+                <a href="/farmstay" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
                   Farm Stay
                 </a>
               </li>
               <li>
-                <a href="#" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
-                  About Us
+                <a href="/faq" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
+                  FAQ
                 </a>
               </li>
               <li>
-                <a href="#" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
-                  Contact
+                <a href="/order-tracking" className="text-[#E8DCC8] hover:text-[#D4AF37] transition-colors">
+                  Track Order
                 </a>
               </li>
             </ul>

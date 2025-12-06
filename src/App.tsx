@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -9,6 +10,12 @@ import Contact from './components/Contact';
 import Blogs from './components/Blogs';
 import Cart from './components/Cart';
 import Payment from './components/Payment';
+import Wishlist from './components/Wishlist';
+import OrderTracking from './components/OrderTracking';
+import FAQ from './components/FAQ';
+import Recipes from './components/Recipes';
+import NewsletterPopup from './components/NewsletterPopup';
+import WhatsAppButton from './components/WhatsAppButton';
 import Footer from './components/Footer';
 import { useState } from 'react';
 
@@ -26,9 +33,15 @@ function AppContent() {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/order-tracking" element={<OrderTracking />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/recipes" element={<Recipes />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <NewsletterPopup />
+      <WhatsAppButton />
       <Footer />
     </div>
   );
@@ -37,9 +50,11 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
+      <WishlistProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </WishlistProvider>
     </Router>
   );
 }

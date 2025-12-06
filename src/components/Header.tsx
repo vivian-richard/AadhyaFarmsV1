@@ -1,6 +1,7 @@
-import { Phone, Mail, Menu, X, ShoppingCart } from 'lucide-react';
+import { Phone, Mail, Menu, X, ShoppingCart, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
@@ -11,6 +12,7 @@ interface HeaderProps {
 export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { totalItems } = useCart();
+  const { totalItems: wishlistItems } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -64,6 +66,17 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
               <span>+91 8332090317</span>
             </a>
             <Link 
+              to="/wishlist" 
+              className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
+            >
+              <Heart className="h-6 w-6" />
+              {wishlistItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistItems}
+                </span>
+              )}
+            </Link>
+            <Link 
               to="/cart" 
               className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
             >
@@ -114,6 +127,21 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
                 <Phone className="h-5 w-5" />
                 <span>Call: +91 8332090317</span>
               </a>
+              <Link
+                to="/wishlist"
+                className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
+                onClick={() => setMobileOpen(false)}
+              >
+                <div className="flex items-center space-x-2">
+                  <Heart className="h-5 w-5" />
+                  <span>Wishlist</span>
+                </div>
+                {wishlistItems > 0 && (
+                  <span className="bg-pink-600 text-white text-xs font-bold rounded-full px-2 py-1">
+                    {wishlistItems}
+                  </span>
+                )}
+              </Link>
               <Link
                 to="/cart"
                 className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
