@@ -9,6 +9,7 @@ import { ProductProvider } from './context/ProductContext';
 import { BlogProvider } from './context/BlogContext';
 import { ReferralProvider } from './context/ReferralContext';
 import { GiftProvider } from './context/GiftContext';
+import { FarmStayProvider } from './context/FarmStayContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -29,6 +30,7 @@ import Subscriptions from './components/Subscriptions';
 import NewSubscription from './components/NewSubscription';
 import ReferralRewards from './components/ReferralRewards';
 import GiftsHampers from './components/GiftsHampers';
+import FarmStayBooking from './components/FarmStayBooking';
 import NewsletterPopup from './components/NewsletterPopup';
 import WhatsAppButton from './components/WhatsAppButton';
 import BackToTop from './components/BackToTop';
@@ -61,6 +63,7 @@ function AppContent() {
         <Route path="/new-subscription" element={<NewSubscription />} />
         <Route path="/rewards" element={<ReferralRewards />} />
         <Route path="/gifts" element={<GiftsHampers />} />
+        <Route path="/farmstay-booking" element={<FarmStayBooking />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <NewsletterPopup />
@@ -79,8 +82,9 @@ function App() {
           <AuthProvider>
             <ReferralProvider>
               <GiftProvider>
-                <SubscriptionProvider>
-                <RecentlyViewedProvider>
+                <FarmStayProvider>
+                  <SubscriptionProvider>
+                    <RecentlyViewedProvider>
                   <WishlistProvider>
                     <CouponProvider>
                       <CartProvider>
@@ -88,8 +92,9 @@ function App() {
                       </CartProvider>
                     </CouponProvider>
                   </WishlistProvider>
-                </RecentlyViewedProvider>
-                </SubscriptionProvider>
+                    </RecentlyViewedProvider>
+                  </SubscriptionProvider>
+                </FarmStayProvider>
               </GiftProvider>
             </ReferralProvider>
           </AuthProvider>

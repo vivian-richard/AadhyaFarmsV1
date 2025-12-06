@@ -1,6 +1,8 @@
 import { Calendar, Users, Home, Utensils, Sun, Moon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function FarmStay() {
+  const navigate = useNavigate();
   const amenities = [
     { icon: Home, title: 'Comfortable Rooms', description: 'Clean, spacious rooms with modern amenities' },
     { icon: Utensils, title: 'Organic Meals', description: 'Fresh farm-to-table meals three times daily' },
@@ -140,12 +142,15 @@ export default function FarmStay() {
             </div>
 
             <div className="text-center">
-              <button className="bg-[#D4AF37] text-[#2D5016] px-12 py-4 rounded-lg text-xl font-semibold hover:bg-[#C09F27] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-3 mx-auto">
+              <button 
+                onClick={() => navigate('/farmstay-booking')}
+                className="bg-[#D4AF37] text-[#2D5016] px-12 py-4 rounded-lg text-xl font-semibold hover:bg-[#C09F27] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-3 mx-auto"
+              >
                 <Calendar className="h-6 w-6" />
-                <span>Book Your Farm Stay</span>
+                <span>Book Your Farm Stay Online</span>
               </button>
               <p className="mt-6 text-lg opacity-90">
-                Call us at +91 8332090317 or email contactus@aadhyafarms.in
+                Or call us at +91 8332090317 | email contactus@aadhyafarms.in
               </p>
             </div>
           </div>
