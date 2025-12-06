@@ -26,25 +26,29 @@ const SocialShare: React.FC<SocialShareProps> = ({ title, description = '', url,
       name: 'Facebook',
       icon: Facebook,
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
-      color: 'bg-blue-600 hover:bg-blue-700',
+      color: 'text-blue-600 hover:text-blue-700',
+      bgColor: 'hover:bg-blue-50',
     },
     {
       name: 'Twitter',
       icon: Twitter,
       url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-      color: 'bg-sky-500 hover:bg-sky-600',
+      color: 'text-sky-500 hover:text-sky-600',
+      bgColor: 'hover:bg-sky-50',
     },
     {
       name: 'LinkedIn',
       icon: Linkedin,
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
-      color: 'bg-blue-700 hover:bg-blue-800',
+      color: 'text-blue-700 hover:text-blue-800',
+      bgColor: 'hover:bg-blue-50',
     },
     {
       name: 'Email',
       icon: Mail,
       url: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
-      color: 'bg-gray-600 hover:bg-gray-700',
+      color: 'text-gray-600 hover:text-gray-700',
+      bgColor: 'hover:bg-gray-50',
     },
   ];
 
@@ -69,11 +73,8 @@ const SocialShare: React.FC<SocialShareProps> = ({ title, description = '', url,
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute bottom-full right-0 mb-2 w-64 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 overflow-hidden">
-            <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-[#2D5016] to-[#3D6020]">
-              <h3 className="font-bold text-white text-sm">Share this product</h3>
-            </div>
-            <div className="p-3 space-y-2 max-h-80 overflow-y-auto">
+          <div className="absolute bottom-full right-0 mb-2 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 p-3">
+            <div className="flex items-center gap-2">
               {shareLinks.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -83,34 +84,32 @@ const SocialShare: React.FC<SocialShareProps> = ({ title, description = '', url,
                       handleShare(link.url);
                       setIsOpen(false);
                     }}
-                    className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-white transition-colors text-sm ${link.color}`}
+                    className={`p-2.5 rounded-lg transition-all ${link.color} ${link.bgColor}`}
+                    title={`Share on ${link.name}`}
+                    aria-label={`Share on ${link.name}`}
                   >
-                    <Icon className="h-4 w-4" />
-                    <span className="font-semibold">{link.name}</span>
+                    <Icon className="h-5 w-5" />
                   </button>
                 );
               })}
+              <div className="w-px h-6 bg-gray-300" />
               <button
                 onClick={() => {
                   copyToClipboard();
                   setTimeout(() => setIsOpen(false), 1500);
                 }}
-                className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm ${
+                className={`p-2.5 rounded-lg transition-all ${
                   copied
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'text-green-600 bg-green-50'
+                    : 'text-gray-600 hover:text-gray-700 hover:bg-gray-50'
                 }`}
+                title={copied ? 'Copied!' : 'Copy Link'}
+                aria-label={copied ? 'Link copied' : 'Copy link'}
               >
                 {copied ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    <span className="font-semibold">Copied!</span>
-                  </>
+                  <Check className="h-5 w-5" />
                 ) : (
-                  <>
-                    <LinkIcon className="h-4 w-4" />
-                    <span className="font-semibold">Copy Link</span>
-                  </>
+                  <LinkIcon className="h-5 w-5" />
                 )}
               </button>
             </div>
