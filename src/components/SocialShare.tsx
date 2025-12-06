@@ -69,27 +69,33 @@ const SocialShare: React.FC<SocialShareProps> = ({ title, description = '', url,
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 overflow-hidden">
-            <div className="p-4 border-b border-gray-200">
-              <h3 className="font-bold text-[#2D5016] text-lg">Share this product</h3>
+          <div className="absolute bottom-full right-0 mb-2 w-64 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 overflow-hidden">
+            <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-[#2D5016] to-[#3D6020]">
+              <h3 className="font-bold text-white text-sm">Share this product</h3>
             </div>
-            <div className="p-4 space-y-2">
+            <div className="p-3 space-y-2 max-h-80 overflow-y-auto">
               {shareLinks.map((link) => {
                 const Icon = link.icon;
                 return (
                   <button
                     key={link.name}
-                    onClick={() => handleShare(link.url)}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-colors ${link.color}`}
+                    onClick={() => {
+                      handleShare(link.url);
+                      setIsOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-white transition-colors text-sm ${link.color}`}
                   >
-                    <Icon className="h-5 w-5" />
-                    <span className="font-semibold">Share on {link.name}</span>
+                    <Icon className="h-4 w-4" />
+                    <span className="font-semibold">{link.name}</span>
                   </button>
                 );
               })}
               <button
-                onClick={copyToClipboard}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                onClick={() => {
+                  copyToClipboard();
+                  setTimeout(() => setIsOpen(false), 1500);
+                }}
+                className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm ${
                   copied
                     ? 'bg-green-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -97,12 +103,12 @@ const SocialShare: React.FC<SocialShareProps> = ({ title, description = '', url,
               >
                 {copied ? (
                   <>
-                    <Check className="h-5 w-5" />
-                    <span className="font-semibold">Link Copied!</span>
+                    <Check className="h-4 w-4" />
+                    <span className="font-semibold">Copied!</span>
                   </>
                 ) : (
                   <>
-                    <LinkIcon className="h-5 w-5" />
+                    <LinkIcon className="h-4 w-4" />
                     <span className="font-semibold">Copy Link</span>
                   </>
                 )}
