@@ -94,8 +94,8 @@ const Wishlist: React.FC = () => {
                 </button>
               </div>
             </div>
-            ))
-          )}
+          ))
+        )}
         </div>
       </div>
     </div>

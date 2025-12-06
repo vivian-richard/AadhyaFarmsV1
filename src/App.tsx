@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
+import { CouponProvider } from './context/CouponContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -11,6 +13,7 @@ import Blogs from './components/Blogs';
 import Cart from './components/Cart';
 import Payment from './components/Payment';
 import Wishlist from './components/Wishlist';
+import RecentlyViewed from './components/RecentlyViewed';
 import OrderTracking from './components/OrderTracking';
 import FAQ from './components/FAQ';
 import Recipes from './components/Recipes';
@@ -35,6 +38,7 @@ function AppContent() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/recently-viewed" element={<RecentlyViewed />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/order-tracking" element={<OrderTracking />} />
         <Route path="/faq" element={<FAQ />} />
@@ -52,11 +56,15 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <WishlistProvider>
-        <CartProvider>
-          <AppContent />
-        </CartProvider>
-      </WishlistProvider>
+      <RecentlyViewedProvider>
+        <WishlistProvider>
+          <CouponProvider>
+            <CartProvider>
+              <AppContent />
+            </CartProvider>
+          </CouponProvider>
+        </WishlistProvider>
+      </RecentlyViewedProvider>
     </Router>
   );
 }

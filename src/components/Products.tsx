@@ -2,12 +2,16 @@ import { ShoppingCart, Search, ChevronLeft, ChevronRight, Check, Heart } from 'l
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useRecentlyViewed } from '../context/RecentlyViewedContext';
 import ProductImageZoom from './ProductImageZoom';
 import { ProductCardSkeleton } from './LoadingSkeletons';
+import SearchAutocomplete from './SearchAutocomplete';
+import SocialShare from './SocialShare';
 
 export default function Products() {
   const { addItem } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { addToRecentlyViewed } = useRecentlyViewed();
   const [addedToCart, setAddedToCart] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -313,6 +317,29 @@ export default function Products() {
           </p>
         </div>
 
+        {/* Search Autocomplete */}
+        <div className="flex justify-center mb-8">
+          <SearchAutocomplete 
+            products={products.map(p => ({ 
+              name: p.name, 
+              category: p.category, 
+              price: p.price, 
+              image: p.image 
+            }))} 
+            onSelect={(product) => {
+              setSearchQuery(product.name);
+              const productId = product.name.toLowerCase().replace(/\s+/g, '-');
+              addToRecentlyViewed({
+                id: productId,
+                name: product.name,
+                price: product.price,
+                image: product.image,
+                category: product.category,
+              });
+            }}
+          />
+        </div>
+
         {/* Search, Filter, and Sort Section */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -422,40 +449,58 @@ export default function Products() {
                   <span className="text-[#7A5C3C]">{product.unit}</span>
                 </div>
                 <p className="text-[#7A5C3C] leading-relaxed mb-6">{product.description}</p>
-                <button 
-                  onClick={() => {
-                    addItem({
-                      id: product.name.toLowerCase().replace(/\s+/g, '-'),
-                      name: product.name,
-                      price: product.price,
-                      image: product.image,
-                      category: product.category,
-                    });
-                    setAddedToCart(product.name);
-                    setTimeout(() => setAddedToCart(null), 2000);
-                  }}
-                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
-                    addedToCart === product.name
-                      ? 'bg-green-600 text-white'
-                      : 'bg-[#2D5016] text-[#F5EFE0] hover:bg-[#3D6020]'
-                  }`}
-                >
-                  {addedToCart === product.name ? (
-                    <>
-                      <Check className="h-5 w-5" />
-                      <span>Added to Cart</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingCart className="h-5 w-5" />
-                      <span>Add to Cart</span>
-                    </>
-                  )}
-                </button>
+                
+                {/* Social Share and Add to Cart */}
+                <div className="flex gap-2 mb-4">
+                  <SocialShare
+                    title={product.name}
+                    description={product.description}
+                    imageUrl={product.image}
+                  />
+                  <button 
+                    onClick={() => {
+                      const productId = product.name.toLowerCase().replace(/\s+/g, '-');
+                      addItem({
+                        id: productId,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        category: product.category,
+                      });
+                      // Track recently viewed when adding to cart
+                      addToRecentlyViewed({
+                        id: productId,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        category: product.category,
+                      });
+                      setAddedToCart(product.name);
+                      setTimeout(() => setAddedToCart(null), 2000);
+                    }}
+                    className={`flex-1 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+                      addedToCart === product.name
+                        ? 'bg-green-600 text-white'
+                        : 'bg-[#2D5016] text-[#F5EFE0] hover:bg-[#3D6020]'
+                    }`}
+                  >
+                    {addedToCart === product.name ? (
+                      <>
+                        <Check className="h-5 w-5" />
+                        <span>Added to Cart</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="h-5 w-5" />
+                        <span>Add to Cart</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-            ))
-          )}
+          ))
+        )}
         </div>
 
         {/* Pagination Controls */}

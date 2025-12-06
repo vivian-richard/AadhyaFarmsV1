@@ -1,7 +1,8 @@
-import { Phone, Mail, Menu, X, ShoppingCart, Heart } from 'lucide-react';
+import { Phone, Mail, Menu, X, ShoppingCart, Heart, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useRecentlyViewed } from '../context/RecentlyViewedContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
@@ -13,6 +14,7 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { totalItems } = useCart();
   const { totalItems: wishlistItems } = useWishlist();
+  const { recentlyViewed } = useRecentlyViewed();
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -73,6 +75,18 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
               {wishlistItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {wishlistItems}
+                </span>
+              )}
+            </Link>
+            <Link 
+              to="/recently-viewed" 
+              className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
+              title="Recently Viewed"
+            >
+              <Clock className="h-6 w-6" />
+              {recentlyViewed.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {recentlyViewed.length}
                 </span>
               )}
             </Link>
@@ -139,6 +153,21 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
                 {wishlistItems > 0 && (
                   <span className="bg-pink-600 text-white text-xs font-bold rounded-full px-2 py-1">
                     {wishlistItems}
+                  </span>
+                )}
+              </Link>
+              <Link
+                to="/recently-viewed"
+                className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
+                onClick={() => setMobileOpen(false)}
+              >
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-5 w-5" />
+                  <span>Recently Viewed</span>
+                </div>
+                {recentlyViewed.length > 0 && (
+                  <span className="bg-blue-600 text-white text-xs font-bold rounded-full px-2 py-1">
+                    {recentlyViewed.length}
                   </span>
                 )}
               </Link>
