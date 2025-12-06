@@ -56,11 +56,11 @@ const SocialShare: React.FC<SocialShareProps> = ({ title, description = '', url,
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-4 py-2 bg-[#2D5016] text-[#F5EFE0] rounded-lg hover:bg-[#3D6020] transition-colors"
+        className="flex items-center justify-center p-2 bg-[#2D5016] text-[#F5EFE0] rounded-lg hover:bg-[#3D6020] transition-colors"
         aria-label="Share"
+        title="Share this product"
       >
         <Share2 className="h-5 w-5" />
-        <span className="font-semibold">Share</span>
       </button>
 
       {isOpen && (

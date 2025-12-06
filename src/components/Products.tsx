@@ -340,21 +340,9 @@ export default function Products() {
           />
         </div>
 
-        {/* Search, Filter, and Sort Section */}
+        {/* Filter and Sort Section */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#7A5C3C]" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-[#E8DCC8] focus:border-[#2D5016] focus:outline-none text-[#2D5016]"
-              />
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Category Filter */}
             <div>
               <select
@@ -443,21 +431,22 @@ export default function Products() {
                 <div className="inline-block px-3 py-1 bg-[#F5EFE0] text-[#2D5016] rounded-full text-xs font-bold mb-3">
                   {product.category}
                 </div>
-                <h3 className="text-2xl font-bold text-[#2D5016] mb-2">{product.name}</h3>
-                <div className="flex items-baseline space-x-2 mb-4">
-                  <span className="text-3xl font-bold text-[#D4AF37]">₹{product.price}</span>
-                  <span className="text-[#7A5C3C]">{product.unit}</span>
-                </div>
-                <p className="text-[#7A5C3C] leading-relaxed mb-6">{product.description}</p>
-                
-                {/* Social Share and Add to Cart */}
-                <div className="flex gap-2 mb-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-2xl font-bold text-[#2D5016] flex-1">{product.name}</h3>
                   <SocialShare
                     title={product.name}
                     description={product.description}
                     imageUrl={product.image}
                   />
-                  <button 
+                </div>
+                <div className="flex items-baseline space-x-2 mb-4">
+                  <span className="text-3xl font-bold text-[#D4AF37]">₹{product.price}</span>
+                  <span className="text-[#7A5C3C]">{product.unit}</span>
+                </div>
+                <p className="text-[#7A5C3C] leading-relaxed mb-4">{product.description}</p>
+                
+                {/* Add to Cart Button */}
+                <button 
                     onClick={() => {
                       const productId = product.name.toLowerCase().replace(/\s+/g, '-');
                       addItem({
@@ -478,7 +467,7 @@ export default function Products() {
                       setAddedToCart(product.name);
                       setTimeout(() => setAddedToCart(null), 2000);
                     }}
-                    className={`flex-1 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
                       addedToCart === product.name
                         ? 'bg-green-600 text-white'
                         : 'bg-[#2D5016] text-[#F5EFE0] hover:bg-[#3D6020]'
@@ -496,7 +485,6 @@ export default function Products() {
                       </>
                     )}
                   </button>
-                </div>
               </div>
             </div>
           ))
