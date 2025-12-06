@@ -3,14 +3,17 @@ import { useCart } from '../context/CartContext';
 import { useCoupon } from '../context/CouponContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useRecentlyViewed } from '../context/RecentlyViewedContext';
+import { useProducts } from '../context/ProductContext';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Tag, X, AlertCircle, Heart, Clock, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SmartRecommendations from './SmartRecommendations';
 
 const Cart: React.FC = () => {
   const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice, addItem } = useCart();
   const { appliedCoupon, applyCoupon, removeCoupon, calculateDiscount, availableCoupons } = useCoupon();
   const { items: wishlistItems, removeFromWishlist } = useWishlist();
   const { recentlyViewed } = useRecentlyViewed();
+  const { getFrequentlyBoughtTogether } = useProducts();
   const [activeTab, setActiveTab] = useState<'cart' | 'wishlist' | 'recently-viewed'>('cart');
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setCouponError] = useState('');
@@ -402,6 +405,24 @@ const Cart: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Frequently Bought Together - Show only when cart tab is active and has items */}
+        {activeTab === 'cart' && items.length > 0 && (
+          <div className="mt-12">
+            <SmartRecommendations
+              type="frequently-bought"
+              productIds={[items[0].id]}
+              title="🛒 Frequently Bought Together"
+            />
+          </div>
+        )}
+
+        {/* You Might Also Like - Show for all tabs */}
+        {(activeTab !== 'cart' || items.length === 0) && (
+          <div className="mt-12">
+            <SmartRecommendations type="seasonal" title="✨ You Might Also Like" />
           </div>
         )}
       </div>

@@ -3,10 +3,13 @@ import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useRecentlyViewed } from '../context/RecentlyViewedContext';
+import { useProducts } from '../context/ProductContext';
 import ProductImageZoom from './ProductImageZoom';
 import { ProductCardSkeleton } from './LoadingSkeletons';
 import SearchAutocomplete from './SearchAutocomplete';
 import SocialShare from './SocialShare';
+import BundleDeals from './BundleDeals';
+import SmartRecommendations from './SmartRecommendations';
 
 export default function Products() {
   const { addItem } = useCart();
@@ -411,6 +414,12 @@ export default function Products() {
                   alt={product.name}
                   className="h-48 w-auto object-contain relative z-10"
                 />
+                {/* Subscription Only Badge */}
+                {(product.name === 'Fresh Milk' || product.name === 'Fresh Curd') && (
+                  <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    Subscription Only
+                  </div>
+                )}
                 {/* Wishlist Button */}
                 <button
                   onClick={() => {
@@ -456,8 +465,17 @@ export default function Products() {
                 </div>
                 <p className="text-[#7A5C3C] leading-relaxed mb-4">{product.description}</p>
                 
-                {/* Add to Cart Button */}
-                <button 
+                {/* Add to Cart or Subscribe Button */}
+                {(product.name === 'Fresh Milk' || product.name === 'Fresh Curd') ? (
+                  <a
+                    href="/new-subscription"
+                    className="w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    <span>Subscribe Only</span>
+                  </a>
+                ) : (
+                  <button 
                     onClick={() => {
                       addItem({
                         id: productId,
@@ -487,6 +505,7 @@ export default function Products() {
                       </>
                     )}
                   </button>
+                )}
               </div>
             </div>
           );
@@ -593,6 +612,12 @@ export default function Products() {
           </div>
         </div>
       </div>
+
+      {/* Smart Recommendations */}
+      <SmartRecommendations type="seasonal" />
+
+      {/* Bundle Deals */}
+      <BundleDeals />
     </div>
   );
 }

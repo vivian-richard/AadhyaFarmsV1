@@ -43,23 +43,16 @@ const Subscriptions: React.FC = () => {
     }
   };
 
-  const getFrequencyLabel = (frequency: string) => {
-    switch (frequency) {
-      case 'daily':
-        return 'Daily Delivery';
-      case 'weekly':
-        return 'Weekly Delivery';
-      case 'monthly':
-        return 'Monthly Delivery';
-      default:
-        return frequency;
-    }
-  };
-
   const getDeliveryDays = (schedule: any) => {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const fullDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    return days.filter((_, idx) => schedule[fullDays[idx]]).join(', ');
+    const selectedDays = days.filter((_, idx) => schedule[fullDays[idx]]);
+    return selectedDays.length > 0 ? selectedDays.join(', ') : 'No days selected';
+  };
+
+  const getDeliveryDaysCount = (schedule: any) => {
+    const fullDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    return fullDays.filter(day => schedule[day]).length;
   };
 
   return (
@@ -110,7 +103,7 @@ const Subscriptions: React.FC = () => {
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-2xl font-bold">{getFrequencyLabel(subscription.frequency)}</h3>
+                        <h3 className="text-2xl font-bold">Daily Subscription</h3>
                         <span className={`px-3 py-1 rounded-full text-sm font-bold border-2 ${getStatusColor(subscription.status)}`}>
                           {subscription.status.toUpperCase()}
                         </span>
@@ -139,19 +132,21 @@ const Subscriptions: React.FC = () => {
                     <div className="md:col-span-2 space-y-3">
                       <h4 className="text-sm font-bold text-gray-600 uppercase tracking-wide mb-3">Products</h4>
                       {subscription.items.map((item, idx) => (
-                        <div key={idx} className="flex items-center space-x-4 bg-gray-50 rounded-lg p-4">
-                          <img 
-                            src={item.product.image} 
-                            alt={item.product.name} 
-                            className="h-16 w-16 object-cover rounded-lg"
-                          />
+                        <div key={idx} className="flex items-center space-x-4 bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 border border-gray-200">
+                          <div className="flex-shrink-0 bg-white rounded-lg p-2 shadow-sm">
+                            <img 
+                              src={item.product.image} 
+                              alt={item.product.name} 
+                              className="h-32 w-32 object-contain"
+                            />
+                          </div>
                           <div className="flex-1">
-                            <p className="font-bold text-[#2D5016]">{item.product.name}</p>
-                            <p className="text-sm text-gray-600">{item.product.unit}</p>
+                            <p className="font-bold text-lg text-[#2D5016]">{item.product.name}</p>
+                            <p className="text-gray-600">{item.product.unit}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-lg text-[#2D5016]">×{item.quantity}</p>
-                            <p className="text-sm text-gray-600">₹{item.product.price}</p>
+                            <p className="font-bold text-2xl text-[#2D5016]">×{item.quantity}</p>
+                            <p className="text-gray-600">₹{item.product.price}</p>
                           </div>
                         </div>
                       ))}
@@ -162,20 +157,17 @@ const Subscriptions: React.FC = () => {
                       <h4 className="text-sm font-bold text-gray-600 uppercase tracking-wide mb-4">Summary</h4>
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Subtotal</span>
+                          <span className="text-gray-600">Daily Total</span>
                           <span className="font-semibold">₹{subscription.totalAmount}</span>
                         </div>
-                        <div className="flex justify-between items-center text-green-600">
-                          <span className="flex items-center gap-1">
-                            <Gift className="h-4 w-4" />
-                            Discount ({subscription.discount}%)
-                          </span>
-                          <span className="font-semibold">-₹{Math.round(subscription.totalAmount * subscription.discount / 100)}</span>
+                        <div className="flex justify-between items-center text-gray-600">
+                          <span>Delivery Days/Week</span>
+                          <span className="font-semibold">{getDeliveryDaysCount(subscription.deliverySchedule)} days</span>
                         </div>
                         <div className="border-t-2 border-gray-200 pt-3 flex justify-between items-center">
-                          <span className="font-bold text-[#2D5016]">Per Delivery</span>
+                          <span className="font-bold text-[#2D5016]">Weekly Amount</span>
                           <span className="font-bold text-2xl text-[#2D5016]">
-                            ₹{Math.round(subscription.totalAmount * (1 - subscription.discount / 100))}
+                            ₹{subscription.totalAmount * getDeliveryDaysCount(subscription.deliverySchedule)}
                           </span>
                         </div>
                       </div>
@@ -183,15 +175,26 @@ const Subscriptions: React.FC = () => {
                   </div>
 
                   {/* Delivery Schedule */}
-                  {subscription.frequency === 'daily' && (
-                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Truck className="h-5 w-5 text-blue-600" />
-                        <h4 className="font-bold text-[#2D5016]">Delivery Days</h4>
-                      </div>
-                      <p className="text-gray-700">{getDeliveryDays(subscription.deliverySchedule)}</p>
+                  <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Truck className="h-5 w-5 text-blue-600" />
+                      <h4 className="font-bold text-[#2D5016]">Delivery Days</h4>
                     </div>
-                  )}
+                    <p className="text-gray-700 font-semibold">{getDeliveryDays(subscription.deliverySchedule)}</p>
+                    {subscription.vacationMode?.isActive && (
+                      <div className="mt-3 p-3 bg-yellow-100 rounded-lg border border-yellow-300">
+                        <p className="text-sm text-yellow-800 font-semibold">🏖️ Vacation Mode Active</p>
+                        <p className="text-xs text-yellow-700 mt-1">
+                          {new Date(subscription.vacationMode.startDate).toLocaleDateString()} - {new Date(subscription.vacationMode.endDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                    {subscription.skipDates && subscription.skipDates.length > 0 && (
+                      <div className="mt-3 p-3 bg-orange-100 rounded-lg border border-orange-300">
+                        <p className="text-sm text-orange-800 font-semibold">📅 Upcoming Skips: {subscription.skipDates.length}</p>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-3">

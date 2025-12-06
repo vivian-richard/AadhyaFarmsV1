@@ -5,12 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Minus, Calendar, Gift, AlertCircle, MapPin, CheckCircle } from 'lucide-react';
 
 const NewSubscription: React.FC = () => {
-  const { availableProducts, addSubscription, getDiscountPercentage } = useSubscription();
+  const { availableProducts, addSubscription } = useSubscription();
   const { user, addresses } = useAuth();
   const navigate = useNavigate();
 
   const [selectedItems, setSelectedItems] = useState<SubscriptionItem[]>([]);
-  const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [deliverySchedule, setDeliverySchedule] = useState<DeliverySchedule>({
     monday: true,
     tuesday: true,
@@ -18,7 +17,7 @@ const NewSubscription: React.FC = () => {
     thursday: true,
     friday: true,
     saturday: true,
-    sunday: true,
+    sunday: false, // Sunday off by default
   });
   const [startDate, setStartDate] = useState(() => {
     const tomorrow = new Date();
@@ -90,10 +89,9 @@ const NewSubscription: React.FC = () => {
     return selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   };
 
-  const discount = getDiscountPercentage(frequency);
-  const subtotal = calculateTotal();
-  const discountAmount = Math.round(subtotal * discount / 100);
-  const total = subtotal - discountAmount;
+  const getDeliveryDaysCount = () => {
+    return Object.values(deliverySchedule).filter(Boolean).length;
+  };
 
   const toggleDay = (day: keyof DeliverySchedule) => {
     setDeliverySchedule({ ...deliverySchedule, [day]: !deliverySchedule[day] });
@@ -110,22 +108,18 @@ const NewSubscription: React.FC = () => {
       return;
     }
 
-    if (frequency === 'daily') {
-      const hasAnyDay = Object.values(deliverySchedule).some(day => day);
-      if (!hasAnyDay) {
-        alert('Please select at least one delivery day');
-        return;
-      }
+    const hasAnyDay = Object.values(deliverySchedule).some(day => day);
+    if (!hasAnyDay) {
+      alert('Please select at least one delivery day');
+      return;
     }
 
     addSubscription({
       items: selectedItems,
-      frequency,
       deliverySchedule,
       startDate,
       status: 'active',
-      totalAmount: subtotal,
-      discount,
+      totalAmount: total,
       addressId: selectedAddressId,
     });
 
@@ -207,58 +201,29 @@ const NewSubscription: React.FC = () => {
               </div>
             </div>
 
-            {/* Frequency Selection */}
+            {/* Delivery Schedule */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
-              <h2 className="text-2xl font-bold text-[#2D5016] mb-6">Delivery Frequency</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { value: 'daily', label: 'Daily', discount: 15, desc: 'Best Value!' },
-                  { value: 'weekly', label: 'Weekly', discount: 12, desc: 'Great Savings' },
-                  { value: 'monthly', label: 'Monthly', discount: 10, desc: 'Good Deal' },
-                ].map((option) => (
+              <h2 className="text-2xl font-bold text-[#2D5016] mb-6">Select Delivery Days</h2>
+              <p className="text-gray-600 mb-4">Choose which days you want your fresh dairy products delivered</p>
+              <div className="grid grid-cols-7 gap-2">
+                {days.map((day) => (
                   <button
-                    key={option.value}
-                    onClick={() => setFrequency(option.value as any)}
-                    className={`p-6 rounded-xl border-2 transition-all ${
-                      frequency === option.value
-                        ? 'border-[#2D5016] bg-[#F5EFE0] shadow-lg'
-                        : 'border-gray-200 hover:border-gray-300'
+                    key={day.key}
+                    onClick={() => toggleDay(day.key)}
+                    className={`py-4 rounded-lg font-semibold transition-all text-sm ${
+                      deliverySchedule[day.key]
+                        ? 'bg-[#2D5016] text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
-                    <div className="text-3xl mb-2">📦</div>
-                    <h3 className="font-bold text-[#2D5016] text-lg mb-1">{option.label}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{option.desc}</p>
-                    <div className="flex items-center justify-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
-                      <Gift className="h-4 w-4" />
-                      {option.discount}% OFF
-                    </div>
+                    {day.label}
                   </button>
                 ))}
               </div>
+              <p className="text-sm text-gray-500 mt-4">
+                💡 Tip: Most customers prefer Monday-Saturday delivery schedule
+              </p>
             </div>
-
-            {/* Delivery Schedule (for daily subscriptions) */}
-            {frequency === 'daily' && (
-              <div className="bg-white rounded-2xl shadow-xl p-6">
-                <h2 className="text-2xl font-bold text-[#2D5016] mb-6">Delivery Days</h2>
-                <p className="text-gray-600 mb-4">Select the days you want delivery</p>
-                <div className="grid grid-cols-7 gap-2">
-                  {days.map((day) => (
-                    <button
-                      key={day.key}
-                      onClick={() => toggleDay(day.key)}
-                      className={`py-3 rounded-lg font-semibold transition-all ${
-                        deliverySchedule[day.key]
-                          ? 'bg-[#2D5016] text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      {day.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Start Date */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
@@ -357,33 +322,58 @@ const NewSubscription: React.FC = () => {
 
                   <div className="border-t-2 border-gray-200 pt-4 space-y-3 mb-6">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Subtotal</span>
-                      <span className="font-semibold">₹{subtotal}</span>
+                      <span className="text-gray-600">Daily Total</span>
+                      <span className="font-semibold">₹{calculateTotal()}</span>
                     </div>
-                    <div className="flex justify-between items-center text-green-600">
-                      <span className="flex items-center gap-1">
-                        <Gift className="h-4 w-4" />
-                        Discount ({discount}%)
-                      </span>
-                      <span className="font-semibold">-₹{discountAmount}</span>
+                    <div className="flex justify-between items-center text-gray-600">
+                      <span>Delivery Days/Week</span>
+                      <span className="font-semibold">{getDeliveryDaysCount()} days</span>
                     </div>
                     <div className="flex justify-between items-center text-xl font-bold text-[#2D5016] pt-3 border-t-2 border-gray-200">
-                      <span>Per Delivery</span>
-                      <span>₹{total}</span>
+                      <span>Weekly Amount</span>
+                      <span>₹{calculateTotal() * getDeliveryDaysCount()}</span>
                     </div>
                   </div>
 
                   <button
                     onClick={handleSubmit}
-                    disabled={selectedItems.length === 0 || !selectedAddressId}
-                    className="w-full py-4 bg-gradient-to-r from-[#2D5016] to-[#3D6020] text-white rounded-xl font-bold text-lg hover:shadow-2xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    disabled={
+                      selectedItems.length === 0 || 
+                      !selectedAddressId || 
+                      getDeliveryDaysCount() === 0
+                    }
+                    className="w-full py-4 bg-gradient-to-r from-[#2D5016] to-[#3D6020] text-white rounded-xl font-bold text-lg hover:shadow-2xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                   >
-                    Create Subscription
+                    <CheckCircle className="h-5 w-5" />
+                    Start Subscription
                   </button>
 
-                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  {/* Validation Messages */}
+                  {selectedItems.length === 0 && (
+                    <p className="text-sm text-red-600 text-center mt-2">
+                      Please select at least one product
+                    </p>
+                  )}
+                  {selectedItems.length > 0 && !selectedAddressId && (
+                    <p className="text-sm text-red-600 text-center mt-2">
+                      Please select a delivery address
+                    </p>
+                  )}
+                  {selectedItems.length > 0 && selectedAddressId && getDeliveryDaysCount() === 0 && (
+                    <p className="text-sm text-red-600 text-center mt-2">
+                      Please select at least one delivery day
+                    </p>
+                  )}
+
+                  <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <p className="text-xs text-green-800">
+                      <strong>✓ Flexible:</strong> Pause anytime, skip specific dates, or set vacation mode
+                    </p>
+                  </div>
+                  
+                  <div className="mt-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-xs text-blue-800">
-                      <strong>Note:</strong> You'll be charged ₹{total} per delivery. You can pause or cancel anytime.
+                      <strong>💰 Pay-as-you-go:</strong> Charged only on delivery days. No advance payment required.
                     </p>
                   </div>
                 </>

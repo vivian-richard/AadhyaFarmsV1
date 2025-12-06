@@ -23,17 +23,23 @@ export interface DeliverySchedule {
   sunday: boolean;
 }
 
+export interface VacationMode {
+  isActive: boolean;
+  startDate: string;
+  endDate: string;
+}
+
 export interface Subscription {
   id: string;
   items: SubscriptionItem[];
-  frequency: 'daily' | 'weekly' | 'monthly';
-  deliverySchedule: DeliverySchedule;
+  deliverySchedule: DeliverySchedule; // Select which days to deliver
   startDate: string;
   status: 'active' | 'paused' | 'cancelled';
   totalAmount: number;
-  discount: number; // percentage
   nextDelivery: string;
   addressId: string;
+  vacationMode?: VacationMode;
+  skipDates?: string[]; // ISO date strings for one-time skips
 }
 
 interface SubscriptionContextType {
@@ -44,7 +50,9 @@ interface SubscriptionContextType {
   pauseSubscription: (id: string) => void;
   resumeSubscription: (id: string) => void;
   cancelSubscription: (id: string) => void;
-  getDiscountPercentage: (frequency: string) => number;
+  skipDelivery: (id: string, date: string) => void;
+  setVacationMode: (id: string, startDate: string, endDate: string) => void;
+  cancelVacationMode: (id: string) => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -55,28 +63,28 @@ const SUBSCRIPTION_PRODUCTS: SubscriptionProduct[] = [
     id: 'milk-500ml',
     name: 'Fresh Farm Milk',
     price: 30,
-    image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500',
+    image: '/products/Milk.png',
     unit: '500ml',
   },
   {
     id: 'milk-1l',
     name: 'Fresh Farm Milk',
     price: 55,
-    image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500',
+    image: '/products/Milk.png',
     unit: '1 Liter',
   },
   {
     id: 'curd-500g',
     name: 'Organic Curd',
     price: 35,
-    image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=500',
+    image: '/products/Curd.png',
     unit: '500g',
   },
   {
     id: 'curd-1kg',
     name: 'Organic Curd',
     price: 65,
-    image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=500',
+    image: '/products/Curd.png',
     unit: '1 Kg',
   },
 ];
@@ -91,50 +99,53 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
   }, [subscriptions]);
 
-  const getDiscountPercentage = (frequency: string): number => {
-    switch (frequency) {
-      case 'daily':
-        return 15;
-      case 'weekly':
-        return 12;
-      case 'monthly':
-        return 10;
-      default:
-        return 0;
-    }
-  };
-
   const calculateNextDelivery = (
     startDate: string,
-    frequency: string,
-    schedule: DeliverySchedule
+    schedule: DeliverySchedule,
+    skipDates: string[] = [],
+    vacationMode?: VacationMode
   ): string => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
     
-    if (start > today) {
-      return startDate;
-    }
-
-    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const nextDate = new Date(today);
+    const nextDate = start > today ? new Date(start) : new Date(today);
     nextDate.setDate(nextDate.getDate() + 1);
 
-    if (frequency === 'daily') {
-      // Find next day that's in the schedule
-      for (let i = 0; i < 7; i++) {
-        const dayName = daysOfWeek[nextDate.getDay()] as keyof DeliverySchedule;
-        if (schedule[dayName]) {
-          return nextDate.toISOString();
-        }
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    // Find next valid delivery day
+    for (let i = 0; i < 30; i++) { // Check up to 30 days ahead
+      const dayName = daysOfWeek[nextDate.getDay()] as keyof DeliverySchedule;
+      const dateString = nextDate.toISOString().split('T')[0];
+      
+      // Check if this day is in the schedule
+      if (!schedule[dayName]) {
         nextDate.setDate(nextDate.getDate() + 1);
+        continue;
       }
-    } else if (frequency === 'weekly') {
-      // Next week, same selected days
-      nextDate.setDate(nextDate.getDate() + 7);
-    } else if (frequency === 'monthly') {
-      // Next month, same date
-      nextDate.setMonth(nextDate.getMonth() + 1);
+
+      // Check if date is skipped
+      if (skipDates.includes(dateString)) {
+        nextDate.setDate(nextDate.getDate() + 1);
+        continue;
+      }
+
+      // Check if date falls in vacation mode
+      if (vacationMode?.isActive) {
+        const vacStart = new Date(vacationMode.startDate);
+        const vacEnd = new Date(vacationMode.endDate);
+        vacStart.setHours(0, 0, 0, 0);
+        vacEnd.setHours(0, 0, 0, 0);
+        
+        if (nextDate >= vacStart && nextDate <= vacEnd) {
+          nextDate.setDate(nextDate.getDate() + 1);
+          continue;
+        }
+      }
+
+      return nextDate.toISOString();
     }
 
     return nextDate.toISOString();
@@ -144,10 +155,12 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const newSubscription: Subscription = {
       ...subscription,
       id: Date.now().toString(),
+      skipDates: [],
       nextDelivery: calculateNextDelivery(
         subscription.startDate,
-        subscription.frequency,
-        subscription.deliverySchedule
+        subscription.deliverySchedule,
+        [],
+        subscription.vacationMode
       ),
     };
     setSubscriptions([...subscriptions, newSubscription]);
@@ -158,11 +171,12 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       subscriptions.map((sub) => {
         if (sub.id === id) {
           const updated = { ...sub, ...updates };
-          if (updates.frequency || updates.deliverySchedule || updates.startDate) {
+          if (updates.deliverySchedule || updates.startDate || updates.skipDates || updates.vacationMode !== undefined) {
             updated.nextDelivery = calculateNextDelivery(
               updated.startDate,
-              updated.frequency,
-              updated.deliverySchedule
+              updated.deliverySchedule,
+              updated.skipDates || [],
+              updated.vacationMode
             );
           }
           return updated;
@@ -184,6 +198,34 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     updateSubscription(id, { status: 'cancelled' });
   };
 
+  const skipDelivery = (id: string, date: string) => {
+    const subscription = subscriptions.find(sub => sub.id === id);
+    if (subscription) {
+      const skipDates = [...(subscription.skipDates || []), date];
+      updateSubscription(id, { skipDates });
+    }
+  };
+
+  const setVacationMode = (id: string, startDate: string, endDate: string) => {
+    updateSubscription(id, {
+      vacationMode: {
+        isActive: true,
+        startDate,
+        endDate,
+      },
+    });
+  };
+
+  const cancelVacationMode = (id: string) => {
+    updateSubscription(id, {
+      vacationMode: {
+        isActive: false,
+        startDate: '',
+        endDate: '',
+      },
+    });
+  };
+
   return (
     <SubscriptionContext.Provider
       value={{
@@ -194,7 +236,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
         pauseSubscription,
         resumeSubscription,
         cancelSubscription,
-        getDiscountPercentage,
+        skipDelivery,
+        setVacationMode,
+        cancelVacationMode,
       }}
     >
       {children}

@@ -5,6 +5,7 @@ import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
 import { CouponProvider } from './context/CouponContext';
 import { AuthProvider } from './context/AuthContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
+import { ProductProvider } from './context/ProductContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -66,19 +67,21 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <SubscriptionProvider>
-          <RecentlyViewedProvider>
-            <WishlistProvider>
-              <CouponProvider>
-                <CartProvider>
-                  <AppContent />
-                </CartProvider>
-              </CouponProvider>
-            </WishlistProvider>
-          </RecentlyViewedProvider>
-        </SubscriptionProvider>
-      </AuthProvider>
+      <ProductProvider>
+        <AuthProvider>
+          <SubscriptionProvider>
+            <RecentlyViewedProvider>
+              <WishlistProvider>
+                <CouponProvider>
+                  <CartProvider>
+                    <AppContent />
+                  </CartProvider>
+                </CouponProvider>
+              </WishlistProvider>
+            </RecentlyViewedProvider>
+          </SubscriptionProvider>
+        </AuthProvider>
+      </ProductProvider>
     </Router>
   );
 }
