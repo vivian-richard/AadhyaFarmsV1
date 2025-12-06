@@ -96,6 +96,13 @@ const NewsletterPopup: React.FC = () => {
                   We respect your privacy. Unsubscribe anytime.
                 </p>
               </div>
+              
+              <button
+                onClick={handleClose}
+                className="w-full text-center text-sm text-gray-500 hover:text-gray-700 mt-4 py-2"
+              >
+                No thanks, I'll pay full price
+              </button>
             </div>
           </>
         ) : (

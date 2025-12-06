@@ -16,6 +16,7 @@ import FAQ from './components/FAQ';
 import Recipes from './components/Recipes';
 import NewsletterPopup from './components/NewsletterPopup';
 import WhatsAppButton from './components/WhatsAppButton';
+import BackToTop from './components/BackToTop';
 import Footer from './components/Footer';
 import { useState } from 'react';
 
@@ -42,6 +43,7 @@ function AppContent() {
       </Routes>
       <NewsletterPopup />
       <WhatsAppButton />
+      <BackToTop />
       <Footer />
     </div>
   );

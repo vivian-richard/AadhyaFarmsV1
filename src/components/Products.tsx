@@ -2,16 +2,28 @@ import { ShoppingCart, Search, ChevronLeft, ChevronRight, Check, Heart } from 'l
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import ProductImageZoom from './ProductImageZoom';
+import { ProductCardSkeleton } from './LoadingSkeletons';
 
 export default function Products() {
   const { addItem } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [addedToCart, setAddedToCart] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
+
+  // Simulate loading effect
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [selectedCategory, sortBy]);
 
   const products = [
     {
@@ -352,7 +364,13 @@ export default function Products() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {currentProducts.map((product, index) => (
+          {isLoading ? (
+            // Show loading skeletons
+            [...Array(itemsPerPage)].map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))
+          ) : (
+            currentProducts.map((product, index) => (
             <div
               key={index}
               className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
@@ -361,7 +379,7 @@ export default function Products() {
                 <div className="absolute inset-0 opacity-10 pointer-events-none">
                   <img src={product.image} alt="" className="h-full w-full object-cover blur-sm" />
                 </div>
-                <img
+                <ProductImageZoom
                   src={product.image}
                   alt={product.name}
                   className="h-48 w-auto object-contain relative z-10"
@@ -436,7 +454,8 @@ export default function Products() {
                 </button>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Pagination Controls */}

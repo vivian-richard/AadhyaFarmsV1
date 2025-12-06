@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWishlist } from '../context/WishlistContext';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { WishlistCardSkeleton } from './LoadingSkeletons';
 
 const Wishlist: React.FC = () => {
   const { items, removeFromWishlist } = useWishlist();
   const { addItem } = useCart();
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (items.length === 0) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (items.length === 0 && !isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-green-50 to-white pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,10 +42,15 @@ const Wishlist: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-green-800 mb-8">My Wishlist ({items.length})</h1>
+        <h1 className="text-4xl font-bold text-green-800 mb-8">
+          My Wishlist {!isLoading && `(${items.length})`}
+        </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item) => (
+          {isLoading ? (
+            [...Array(3)].map((_, i) => <WishlistCardSkeleton key={i} />)
+          ) : (
+            items.map((item) => (
             <div
               key={item.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
@@ -80,7 +94,8 @@ const Wishlist: React.FC = () => {
                 </button>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
