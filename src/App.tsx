@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
 import { ProductProvider } from './context/ProductContext';
 import { BlogProvider } from './context/BlogContext';
+import { ReferralProvider } from './context/ReferralContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -25,6 +26,7 @@ import Login from './components/Login';
 import Profile from './components/Profile';
 import Subscriptions from './components/Subscriptions';
 import NewSubscription from './components/NewSubscription';
+import ReferralRewards from './components/ReferralRewards';
 import NewsletterPopup from './components/NewsletterPopup';
 import WhatsAppButton from './components/WhatsAppButton';
 import BackToTop from './components/BackToTop';
@@ -55,6 +57,7 @@ function AppContent() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/subscriptions" element={<Subscriptions />} />
         <Route path="/new-subscription" element={<NewSubscription />} />
+        <Route path="/rewards" element={<ReferralRewards />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <NewsletterPopup />
@@ -71,17 +74,19 @@ function App() {
       <ProductProvider>
         <BlogProvider>
           <AuthProvider>
-            <SubscriptionProvider>
-              <RecentlyViewedProvider>
-                <WishlistProvider>
-                  <CouponProvider>
-                    <CartProvider>
-                      <AppContent />
-                    </CartProvider>
-                  </CouponProvider>
-                </WishlistProvider>
-              </RecentlyViewedProvider>
-            </SubscriptionProvider>
+            <ReferralProvider>
+              <SubscriptionProvider>
+                <RecentlyViewedProvider>
+                  <WishlistProvider>
+                    <CouponProvider>
+                      <CartProvider>
+                        <AppContent />
+                      </CartProvider>
+                    </CouponProvider>
+                  </WishlistProvider>
+                </RecentlyViewedProvider>
+              </SubscriptionProvider>
+            </ReferralProvider>
           </AuthProvider>
         </BlogProvider>
       </ProductProvider>
