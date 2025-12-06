@@ -1,197 +1,340 @@
-import { Calendar, User, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { useBlog } from '../context/BlogContext';
+import { useNavigate } from 'react-router-dom';
+import { 
+  ChefHat, BookOpen, Tractor, Video, Heart, 
+  Clock, User, Calendar, Eye, ArrowRight 
+} from 'lucide-react';
 
-export default function Blogs() {
-  const blogPosts = [
-    {
-      title: 'The Benefits of A2 Milk: Why It\'s Better for Your Family',
-      excerpt: 'Discover the nutritional advantages of A2 milk and why more families are making the switch to this healthier dairy option.',
-      image: '/cow.png',
-      date: 'November 28, 2024',
-      author: 'Aadhya Farms Team',
-      category: 'Health & Nutrition',
-    },
-    {
-      title: 'Organic Farming Practices: How We Nurture Our Land',
-      excerpt: 'Learn about our sustainable farming methods that keep the soil healthy and produce the finest organic dairy products.',
-      image: '/farmscene.png',
-      date: 'November 15, 2024',
-      author: 'Farm Manager',
-      category: 'Sustainable Farming',
-    },
-    {
-      title: 'Farm-to-Table: The Journey of Your Morning Milk',
-      excerpt: 'Follow the journey of fresh milk from our happy cows to your breakfast table, ensuring quality at every step.',
-      image: '/products.png',
-      date: 'November 5, 2024',
-      author: 'Aadhya Farms Team',
-      category: 'Farm Life',
-    },
-    {
-      title: 'Raising Happy Animals: Our Animal Welfare Standards',
-      excerpt: 'Explore how we ensure our cows and goats live happy, healthy lives with plenty of space to roam and natural grazing.',
-      image: '/goat.png',
-      date: 'October 20, 2024',
-      author: 'Animal Care Specialist',
-      category: 'Animal Welfare',
-    },
-    {
-      title: 'Seasonal Farm Activities: What to Expect During Your Visit',
-      excerpt: 'Plan your farm stay experience by learning about the different activities available throughout the seasons.',
-      image: '/farmactivites.png',
-      date: 'October 10, 2024',
-      author: 'Guest Relations',
-      category: 'Farm Stay',
-    },
-    {
-      title: 'Traditional Ghee Making: An Ancient Art Preserved',
-      excerpt: 'Discover the time-honored process of making pure, hand-churned ghee using traditional methods passed down through generations.',
-      image: '/cow.png',
-      date: 'September 25, 2024',
-      author: 'Aadhya Farms Team',
-      category: 'Traditional Methods',
-    },
-  ];
-
-  const categories = ['All', 'Health & Nutrition', 'Sustainable Farming', 'Farm Life', 'Animal Welfare', 'Farm Stay', 'Traditional Methods'];
+const Blogs: React.FC = () => {
+  const navigate = useNavigate();
+  const { recipes, nutritionGuides, farmStories, videoTutorials, healthArticles } = useBlog();
+  const [activeTab, setActiveTab] = useState<'recipes' | 'nutrition' | 'stories' | 'videos' | 'health'>('recipes');
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F5EFE0] to-[#E8DCC8] py-20 relative overflow-hidden">
-      <div className="absolute left-0 top-1/4 opacity-3 pointer-events-none">
-        <img src="/cow.png" alt="" className="h-96 w-auto" />
-      </div>
-      <div className="absolute right-0 bottom-1/4 opacity-3 pointer-events-none">
-        <img src="/goat.png" alt="" className="h-80 w-auto transform scale-x-[-1]" />
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl lg:text-6xl font-bold text-[#2D5016] mb-6">
-            Farm Stories & Insights
-          </h1>
-          <p className="text-xl text-[#7A5C3C] max-w-3xl mx-auto leading-relaxed">
-            Explore our journey in organic farming, learn about sustainable practices,
-            and discover tips for a healthier lifestyle.
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-[#F5EFE0] to-[#E8DCC8] pt-24 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-[#2D5016] mb-4">Farm Fresh Content</h1>
+          <p className="text-xl text-gray-600">Recipes, guides, stories & more from Aadhya Farms</p>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category, index) => (
-            <button
-              key={index}
-              className="px-6 py-2 rounded-full bg-white text-[#2D5016] font-semibold hover:bg-[#2D5016] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              {category}
-            </button>
-          ))}
+        {/* Tab Navigation */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <button
+            onClick={() => setActiveTab('recipes')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+              activeTab === 'recipes'
+                ? 'bg-[#2D5016] text-white shadow-xl'
+                : 'bg-white text-[#2D5016] hover:bg-gray-100'
+            }`}
+          >
+            <ChefHat className="h-5 w-5" />
+            Recipes ({recipes.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('nutrition')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+              activeTab === 'nutrition'
+                ? 'bg-[#2D5016] text-white shadow-xl'
+                : 'bg-white text-[#2D5016] hover:bg-gray-100'
+            }`}
+          >
+            <BookOpen className="h-5 w-5" />
+            Nutrition Guides ({nutritionGuides.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('stories')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+              activeTab === 'stories'
+                ? 'bg-[#2D5016] text-white shadow-xl'
+                : 'bg-white text-[#2D5016] hover:bg-gray-100'
+            }`}
+          >
+            <Tractor className="h-5 w-5" />
+            Farm Stories ({farmStories.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('videos')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+              activeTab === 'videos'
+                ? 'bg-[#2D5016] text-white shadow-xl'
+                : 'bg-white text-[#2D5016] hover:bg-gray-100'
+            }`}
+          >
+            <Video className="h-5 w-5" />
+            Video Tutorials ({videoTutorials.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('health')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+              activeTab === 'health'
+                ? 'bg-[#2D5016] text-white shadow-xl'
+                : 'bg-white text-[#2D5016] hover:bg-gray-100'
+            }`}
+          >
+            <Heart className="h-5 w-5" />
+            Health Articles ({healthArticles.length})
+          </button>
         </div>
 
-        {/* Featured Post */}
-        <div className="mb-20">
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="bg-gradient-to-br from-[#F5EFE0] to-[#E8DCC8] p-12 flex items-center justify-center">
-                <div className="bg-[#F5EFE0] rounded-2xl p-8 transform rotate-3 shadow-xl">
+        {/* Recipes Tab */}
+        {activeTab === 'recipes' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {recipes.map((recipe) => (
+              <div
+                key={recipe.id}
+                onClick={() => navigate(`/recipe/${recipe.id}`)}
+                className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all cursor-pointer transform hover:scale-105"
+              >
+                <div className="relative h-64">
                   <img
-                    src={blogPosts[0].image}
-                    alt={blogPosts[0].title}
-                    className="h-80 w-auto rounded-lg"
+                    src={recipe.image}
+                    alt={recipe.title}
+                    className="w-full h-full object-contain bg-gradient-to-br from-[#F5EFE0] to-white p-4"
                   />
-                </div>
-              </div>
-              <div className="p-12 flex flex-col justify-center">
-                <div className="inline-block px-4 py-2 bg-[#D4AF37] text-[#2D5016] rounded-full text-sm font-bold mb-4 w-fit">
-                  Featured Post
-                </div>
-                <h2 className="text-4xl font-bold text-[#2D5016] mb-4">
-                  {blogPosts[0].title}
-                </h2>
-                <div className="flex items-center space-x-6 text-[#7A5C3C] mb-6">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4" />
-                    <span className="text-sm">{blogPosts[0].date}</span>
+                  <div className="absolute top-4 right-4 bg-[#2D5016] text-white px-3 py-1 rounded-full text-sm font-bold">
+                    {recipe.difficulty}
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span className="text-sm">{blogPosts[0].author}</span>
+                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold text-[#2D5016]">
+                    {recipe.category}
                   </div>
                 </div>
-                <p className="text-[#7A5C3C] text-lg leading-relaxed mb-6">
-                  {blogPosts[0].excerpt}
-                </p>
-                <button className="bg-[#2D5016] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#3D6020] transition-all duration-300 flex items-center space-x-2 w-fit">
-                  <span>Read More</span>
-                  <ArrowRight className="h-5 w-5" />
-                </button>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-[#2D5016] mb-2">{recipe.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{recipe.description}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      {recipe.prepTime} + {recipe.cookTime}
+                    </span>
+                    <span>{recipe.servings} servings</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm">
+                      <span className="font-semibold text-[#2D5016]">{recipe.nutritionInfo.calories}</span>
+                      <span className="text-gray-500"> cal</span>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-[#2D5016]" />
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        </div>
+        )}
 
-        {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.slice(1).map((post, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-            >
-              <div className="bg-gradient-to-br from-[#F5EFE0] to-[#E8DCC8] p-8 flex items-center justify-center h-64 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 pointer-events-none">
-                  <img src={post.image} alt="" className="h-full w-full object-cover blur-sm" />
-                </div>
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="h-48 w-auto object-contain relative z-10"
-                />
-              </div>
-              <div className="p-6">
-                <div className="inline-block px-3 py-1 bg-[#F5EFE0] text-[#2D5016] rounded-full text-xs font-bold mb-3">
-                  {post.category}
-                </div>
-                <h3 className="text-xl font-bold text-[#2D5016] mb-3 line-clamp-2">
-                  {post.title}
-                </h3>
-                <div className="flex items-center space-x-4 text-[#7A5C3C] text-sm mb-4">
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>{post.date}</span>
+        {/* Nutrition Guides Tab */}
+        {activeTab === 'nutrition' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {nutritionGuides.map((guide) => (
+              <div
+                key={guide.id}
+                onClick={() => navigate(`/nutrition-guide/${guide.id}`)}
+                className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all cursor-pointer"
+              >
+                <div className="flex flex-col md:flex-row">
+                  <div className="md:w-1/3 h-64 md:h-auto">
+                    <img
+                      src={guide.image}
+                      alt={guide.title}
+                      className="w-full h-full object-contain bg-gradient-to-br from-[#F5EFE0] to-white p-6"
+                    />
+                  </div>
+                  <div className="md:w-2/3 p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
+                        {guide.category}
+                      </span>
+                      <span className="text-sm text-gray-500 flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        {guide.readTime}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-[#2D5016] mb-3">{guide.title}</h3>
+                    <p className="text-gray-600 mb-4">{guide.excerpt}</p>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        {guide.author}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        {new Date(guide.date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {guide.tags.map((tag, idx) => (
+                        <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <p className="text-[#7A5C3C] leading-relaxed mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                <button className="text-[#2D5016] font-semibold hover:text-[#D4AF37] transition-colors duration-300 flex items-center space-x-2">
-                  <span>Read More</span>
-                  <ArrowRight className="h-4 w-4" />
-                </button>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Newsletter Section */}
-        <div className="mt-20 bg-gradient-to-r from-[#2D5016] to-[#3D6020] rounded-3xl p-12 md:p-16 text-white shadow-xl">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              Stay Updated with Farm News
-            </h2>
-            <p className="text-xl text-[#E8DCC8] leading-relaxed mb-8">
-              Subscribe to our newsletter for the latest updates, farm tips, special offers, and new blog posts delivered to your inbox.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="px-6 py-4 rounded-lg w-full sm:w-96 text-[#2D5016] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
-              />
-              <button className="bg-[#D4AF37] text-[#2D5016] px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#C09F27] transition-all duration-300 shadow-lg whitespace-nowrap">
-                Subscribe Now
-              </button>
-            </div>
+            ))}
           </div>
-        </div>
+        )}
+
+        {/* Farm Stories Tab */}
+        {activeTab === 'stories' && (
+          <div className="space-y-8">
+            {farmStories.map((story) => (
+              <div
+                key={story.id}
+                onClick={() => navigate(`/farm-story/${story.id}`)}
+                className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all cursor-pointer"
+              >
+                <div className="flex flex-col md:flex-row">
+                  <div className="md:w-1/4 h-64 md:h-auto">
+                    <img
+                      src={story.image}
+                      alt={story.title}
+                      className="w-full h-full object-contain bg-gradient-to-br from-[#2D5016] to-[#3D6020] p-8"
+                    />
+                  </div>
+                  <div className="md:w-3/4 p-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="px-4 py-2 bg-[#2D5016] text-white rounded-full text-sm font-bold flex items-center gap-2">
+                        <Tractor className="h-4 w-4" />
+                        {story.category}
+                      </span>
+                      <span className="text-sm text-gray-500 flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        {story.readTime}
+                      </span>
+                    </div>
+                    <h3 className="text-3xl font-bold text-[#2D5016] mb-3">{story.title}</h3>
+                    <p className="text-gray-600 text-lg mb-6">{story.excerpt}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          {story.author}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          {new Date(story.date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <button className="flex items-center gap-2 px-6 py-3 bg-[#2D5016] text-white rounded-lg hover:bg-[#3D6020] transition-colors font-semibold">
+                        Read Story
+                        <ArrowRight className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Video Tutorials Tab */}
+        {activeTab === 'videos' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {videoTutorials.map((video) => (
+              <div
+                key={video.id}
+                onClick={() => navigate(`/video/${video.id}`)}
+                className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all cursor-pointer"
+              >
+                <div className="relative h-72">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-contain bg-gradient-to-br from-[#F5EFE0] to-white p-8"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition-all">
+                    <div className="w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center">
+                      <Video className="h-10 w-10 text-[#2D5016] ml-1" />
+                    </div>
+                  </div>
+                  <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-lg text-sm font-bold">
+                    {video.duration}
+                  </div>
+                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold text-[#2D5016]">
+                    {video.category}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-[#2D5016] mb-2">{video.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{video.description}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span className="flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      {video.views.toLocaleString()} views
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {new Date(video.date).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Health Articles Tab */}
+        {activeTab === 'health' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {healthArticles.map((article) => (
+              <div
+                key={article.id}
+                onClick={() => navigate(`/health-article/${article.id}`)}
+                className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all cursor-pointer"
+              >
+                <div className="relative h-64">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-contain bg-gradient-to-br from-[#F5EFE0] to-white p-6"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <Heart className="h-8 w-8 text-red-500 fill-red-500" />
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">
+                      {article.category}
+                    </span>
+                    <span className="text-sm text-gray-500 flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      {article.readTime}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#2D5016] mb-3">{article.title}</h3>
+                  <p className="text-gray-600 mb-4">{article.excerpt}</p>
+                  <div className="mb-4">
+                    <p className="text-sm font-semibold text-gray-700 mb-2">Key Benefits:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {article.benefits.slice(0, 3).map((benefit, idx) => (
+                        <span key={idx} className="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-xs font-semibold">
+                          ✓ {benefit}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-200">
+                    <span className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      {article.author}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {new Date(article.date).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default Blogs;
