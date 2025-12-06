@@ -1,10 +1,12 @@
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface HeroProps {
   setCurrentPage: (page: string) => void;
 }
 
 export default function Hero({ setCurrentPage }: HeroProps) {
+  const navigate = useNavigate();
   return (
     <div className="bg-gradient-to-b from-[#F5EFE0] to-[#E8DCC8] relative overflow-auto ">
       <div className="absolute right-0 top-0 opacity-5 pointer-events-none">
@@ -43,14 +45,14 @@ export default function Hero({ setCurrentPage }: HeroProps) {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <button
-                onClick={() => setCurrentPage('products')}
+                onClick={() => { navigate('/products'); setCurrentPage('products'); }}
                 className="bg-[#2D5016] text-[#F5EFE0] px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#3D6020] transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <span>Explore Products</span>
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
-                onClick={() => setCurrentPage('farmstay')}
+                onClick={() => { navigate('/farmstay'); setCurrentPage('farmstay'); }}
                 className="bg-[#D4AF37] text-[#2D5016] px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#C09F27] transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <span>Book Farm Stay</span>
@@ -140,7 +142,7 @@ export default function Hero({ setCurrentPage }: HeroProps) {
                 Today, we're proud to maintain traditional farming methods while embracing modern quality standards, ensuring every drop of milk reflects our commitment to excellence and environmental stewardship.
               </p>
               <button
-                onClick={() => setCurrentPage('about')}
+                onClick={() => { navigate('/about'); setCurrentPage('about'); }}
                 className="bg-[#D4AF37] text-[#2D5016] px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#C09F27] transition-all duration-300 shadow-lg"
               >
                 Learn More About Us
@@ -220,8 +222,63 @@ export default function Hero({ setCurrentPage }: HeroProps) {
           </div>
         </div>
 
+        {/* FAQ Quick Access */}
+        <div className="mt-32 mb-12">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl lg:text-5xl font-bold text-[#2D5016] mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-[#7A5C3C] max-w-3xl mx-auto">
+              Find quick answers to common questions about our products and services
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-2xl font-bold text-[#2D5016] mb-4">🥛 About Our Products</h3>
+              <div className="space-y-3 text-gray-700">
+                <p className="font-semibold">Are your products organic?</p>
+                <p className="text-sm">Yes, all our dairy products are 100% organic and sourced directly from our farm.</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-2xl font-bold text-[#2D5016] mb-4">🚚 Delivery & Orders</h3>
+              <div className="space-y-3 text-gray-700">
+                <p className="font-semibold">What are your delivery areas?</p>
+                <p className="text-sm">We deliver across major cities. Check our delivery policy for specific locations.</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-2xl font-bold text-[#2D5016] mb-4">🏡 Farm Stay Experience</h3>
+              <div className="space-y-3 text-gray-700">
+                <p className="font-semibold">Can I visit your farm?</p>
+                <p className="text-sm">Absolutely! We offer immersive farm stay experiences. Book your visit today!</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-2xl font-bold text-[#2D5016] mb-4">📦 Subscriptions</h3>
+              <div className="space-y-3 text-gray-700">
+                <p className="font-semibold">How do subscriptions work?</p>
+                <p className="text-sm">Get regular deliveries of milk & curd with up to 15% discount. Fully customizable!</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <button
+              onClick={() => { navigate('/faq'); setCurrentPage('faq'); }}
+              className="bg-[#2D5016] text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#3D6020] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              View All FAQs →
+            </button>
+          </div>
+        </div>
+
         {/* Call to Action */}
-        <div className="mt-32 mb-20 text-center bg-gradient-to-br from-[#F5EFE0] to-[#E8DCC8] rounded-3xl p-12 md:p-16">
+        <div className="mt-20 mb-20 text-center bg-gradient-to-br from-[#F5EFE0] to-[#E8DCC8] rounded-3xl p-12 md:p-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-[#2D5016] mb-6">
             Ready to Experience Pure Organic Goodness?
           </h2>
@@ -231,13 +288,13 @@ export default function Hero({ setCurrentPage }: HeroProps) {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <button
-              onClick={() => setCurrentPage('products')}
+              onClick={() => { navigate('/products'); setCurrentPage('products'); }}
               className="bg-[#2D5016] text-[#F5EFE0] px-10 py-5 rounded-lg text-xl font-semibold hover:bg-[#3D6020] transition-all duration-300 shadow-xl transform hover:-translate-y-1"
             >
               Order Now
             </button>
             <button
-              onClick={() => setCurrentPage('farmstay')}
+              onClick={() => { navigate('/farmstay'); setCurrentPage('farmstay'); }}
               className="bg-white border-2 border-[#2D5016] text-[#2D5016] px-10 py-5 rounded-lg text-xl font-semibold hover:bg-[#2D5016] hover:text-white transition-all duration-300 shadow-xl transform hover:-translate-y-1"
             >
               Visit Our Farm

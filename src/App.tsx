@@ -3,6 +3,8 @@ import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
 import { CouponProvider } from './context/CouponContext';
+import { AuthProvider } from './context/AuthContext';
+import { SubscriptionProvider } from './context/SubscriptionContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -17,6 +19,10 @@ import RecentlyViewed from './components/RecentlyViewed';
 import OrderTracking from './components/OrderTracking';
 import FAQ from './components/FAQ';
 import Recipes from './components/Recipes';
+import Login from './components/Login';
+import Profile from './components/Profile';
+import Subscriptions from './components/Subscriptions';
+import NewSubscription from './components/NewSubscription';
 import NewsletterPopup from './components/NewsletterPopup';
 import WhatsAppButton from './components/WhatsAppButton';
 import BackToTop from './components/BackToTop';
@@ -43,6 +49,10 @@ function AppContent() {
         <Route path="/order-tracking" element={<OrderTracking />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/recipes" element={<Recipes />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/subscriptions" element={<Subscriptions />} />
+        <Route path="/new-subscription" element={<NewSubscription />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <NewsletterPopup />
@@ -56,15 +66,19 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <RecentlyViewedProvider>
-        <WishlistProvider>
-          <CouponProvider>
-            <CartProvider>
-              <AppContent />
-            </CartProvider>
-          </CouponProvider>
-        </WishlistProvider>
-      </RecentlyViewedProvider>
+      <AuthProvider>
+        <SubscriptionProvider>
+          <RecentlyViewedProvider>
+            <WishlistProvider>
+              <CouponProvider>
+                <CartProvider>
+                  <AppContent />
+                </CartProvider>
+              </CouponProvider>
+            </WishlistProvider>
+          </RecentlyViewedProvider>
+        </SubscriptionProvider>
+      </AuthProvider>
     </Router>
   );
 }

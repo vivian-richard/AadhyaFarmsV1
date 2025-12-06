@@ -1,8 +1,7 @@
-import { Phone, Mail, Menu, X, ShoppingCart, Heart, Clock } from 'lucide-react';
+import { Phone, Mail, Menu, X, ShoppingCart, User, LogIn, Award } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
-import { useRecentlyViewed } from '../context/RecentlyViewedContext';
+import { useAuth } from '../context/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
@@ -13,17 +12,16 @@ interface HeaderProps {
 export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { totalItems } = useCart();
-  const { totalItems: wishlistItems } = useWishlist();
-  const { recentlyViewed } = useRecentlyViewed();
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   
   const navItems = [
     { id: 'home', label: 'Home', path: '/' },
     { id: 'products', label: 'Products', path: '/products' },
+    { id: 'subscriptions', label: 'Subscriptions', path: '/subscriptions' },
     { id: 'farmstay', label: 'Farm Stay', path: '/farmstay' },
     { id: 'blogs', label: 'Blogs', path: '/blogs' },
-    { id: 'faq', label: 'FAQ', path: '/faq' },
     { id: 'about', label: 'About Us', path: '/about' },
     { id: 'contact', label: 'Contact', path: '/contact' },
   ];
@@ -64,33 +62,6 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
           </nav>
 
           <div className="hidden lg:flex items-center space-x-6">
-            <a href="tel:+918332090317" className="flex items-center space-x-2 hover:text-[#D4AF37] transition-colors">
-              <Phone className="h-5 w-5" />
-              <span>+91 8332090317</span>
-            </a>
-            <Link 
-              to="/wishlist" 
-              className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
-            >
-              <Heart className="h-6 w-6" />
-              {wishlistItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {wishlistItems}
-                </span>
-              )}
-            </Link>
-            <Link 
-              to="/recently-viewed" 
-              className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
-              title="Recently Viewed"
-            >
-              <Clock className="h-6 w-6" />
-              {recentlyViewed.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {recentlyViewed.length}
-                </span>
-              )}
-            </Link>
             <Link 
               to="/cart" 
               className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
@@ -102,6 +73,30 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
                 </span>
               )}
             </Link>
+            {user ? (
+              <Link 
+                to="/profile" 
+                className="flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
+                title={`${user.name} - ${user.loyaltyPoints} points`}
+              >
+                <User className="h-6 w-6" />
+                <div className="hidden lg:flex items-center space-x-2">
+                  <span className="font-semibold">{user.name}</span>
+                  <div className="flex items-center space-x-1 bg-[#D4AF37] text-[#2D5016] px-2 py-1 rounded-full text-xs">
+                    <Award className="h-3 w-3" />
+                    <span>{user.loyaltyPoints}</span>
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <Link 
+                to="/login" 
+                className="flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
+              >
+                <LogIn className="h-6 w-6" />
+                <span className="hidden lg:inline font-semibold">Login</span>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -134,44 +129,6 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
                   {item.label}
                 </button>
               ))}
-              <a
-                href="tel:+918332090317"
-                className="flex items-center space-x-2 px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
-                onClick={() => setMobileOpen(false)}
-              >
-                <Phone className="h-5 w-5" />
-                <span>Call: +91 8332090317</span>
-              </a>
-              <Link
-                to="/wishlist"
-                className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
-                onClick={() => setMobileOpen(false)}
-              >
-                <div className="flex items-center space-x-2">
-                  <Heart className="h-5 w-5" />
-                  <span>Wishlist</span>
-                </div>
-                {wishlistItems > 0 && (
-                  <span className="bg-pink-600 text-white text-xs font-bold rounded-full px-2 py-1">
-                    {wishlistItems}
-                  </span>
-                )}
-              </Link>
-              <Link
-                to="/recently-viewed"
-                className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
-                onClick={() => setMobileOpen(false)}
-              >
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-5 w-5" />
-                  <span>Recently Viewed</span>
-                </div>
-                {recentlyViewed.length > 0 && (
-                  <span className="bg-blue-600 text-white text-xs font-bold rounded-full px-2 py-1">
-                    {recentlyViewed.length}
-                  </span>
-                )}
-              </Link>
               <Link
                 to="/cart"
                 className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
@@ -187,6 +144,31 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
                   </span>
                 )}
               </Link>
+              {user ? (
+                <Link
+                  to="/profile"
+                  className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <div className="flex items-center space-x-2">
+                    <User className="h-5 w-5" />
+                    <span>{user.name}</span>
+                  </div>
+                  <div className="flex items-center space-x-1 bg-[#D4AF37] text-[#2D5016] px-2 py-1 rounded-full text-xs">
+                    <Award className="h-3 w-3" />
+                    <span>{user.loyaltyPoints}</span>
+                  </div>
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="flex items-center space-x-2 px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <LogIn className="h-5 w-5" />
+                  <span>Login / Register</span>
+                </Link>
+              )}
             </nav>
           </div>
         )}
