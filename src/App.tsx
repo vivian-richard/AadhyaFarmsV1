@@ -74,6 +74,55 @@ function AppContent() {
       <NewsletterPopup />
       <WhatsAppButton />
       <BackToTop />
+      {/* Mobile App Bar - visible only on mobile via CSS, aria-hidden on desktop */}
+      <div
+        className="mobile-app-bar"
+        role="navigation"
+        style={window.innerWidth > 768 ? { display: 'none' } : {}}
+      >
+        <div className="logo">
+          <img src="/logo192.png" alt="Aadhya Farms" />
+        </div>
+        <div className="app-bar-actions">
+          <button className="mobile-app-bar__search" aria-label="Search">
+            <span role="img" aria-label="search">🔍</span>
+          </button>
+          <button className="mobile-app-bar__cart" aria-label="Cart">
+            <span role="img" aria-label="cart">🛒</span>
+          </button>
+          <button className="mobile-app-bar__profile" aria-label="Profile">
+            <span role="img" aria-label="profile">👤</span>
+          </button>
+        </div>
+      </div>
+      {/* Main content remains unchanged */}
+      {/* Mobile Bottom Navigation - visible only on mobile via CSS, aria-hidden on desktop, placed above Footer */}
+      <nav
+        className="mobile-bottom-nav"
+        role="navigation"
+        style={window.innerWidth > 768 ? { display: 'none' } : {}}
+      >
+        <button className="nav-btn" aria-label="Home">
+          <span role="img" aria-label="home">🏠</span>
+          <span className="mobile-bottom-nav__label">Home</span>
+        </button>
+        <button className="nav-btn" aria-label="Shop">
+          <span role="img" aria-label="shop">🛍️</span>
+          <span className="mobile-bottom-nav__label">Shop</span>
+        </button>
+        <button className="nav-btn" aria-label="Gifts">
+          <span role="img" aria-label="gift">🎁</span>
+          <span className="mobile-bottom-nav__label">Gifts</span>
+        </button>
+        <button className="nav-btn" aria-label="Farm Stay">
+          <span role="img" aria-label="farm">🏡</span>
+          <span className="mobile-bottom-nav__label">Farm Stay</span>
+        </button>
+        <button className="nav-btn" aria-label="Profile">
+          <span role="img" aria-label="profile">👤</span>
+          <span className="mobile-bottom-nav__label">Profile</span>
+        </button>
+      </nav>
       <Footer />
     </div>
   );

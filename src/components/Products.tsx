@@ -301,7 +301,7 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F5EFE0] to-[#E8DCC8] py-20 relative overflow-hidden">
+    <div className="products-section min-h-screen bg-gradient-to-b from-[#F5EFE0] to-[#E8DCC8] py-20 relative overflow-hidden">
       <div className="absolute left-0 top-1/2 opacity-3 pointer-events-none">
         <img src="/hen.png" alt="" className="h-72 w-auto" />
       </div>
@@ -393,7 +393,7 @@ export default function Products() {
               return (
             <div
               key={index}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="product-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
               onMouseEnter={() => {
                 // Track when user hovers over product
                 addToRecentlyViewed({
