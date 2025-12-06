@@ -317,32 +317,32 @@ export default function Products() {
           </p>
         </div>
 
-        {/* Search Autocomplete */}
-        <div className="flex justify-center mb-8">
-          <SearchAutocomplete 
-            products={products.map(p => ({ 
-              name: p.name, 
-              category: p.category, 
-              price: p.price, 
-              image: p.image 
-            }))} 
-            onSelect={(product) => {
-              setSearchQuery(product.name);
-              const productId = product.name.toLowerCase().replace(/\s+/g, '-');
-              addToRecentlyViewed({
-                id: productId,
-                name: product.name,
-                price: product.price,
-                image: product.image,
-                category: product.category,
-              });
-            }}
-          />
-        </div>
-
-        {/* Filter and Sort Section */}
+        {/* Search, Filter and Sort Section */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Search Autocomplete */}
+            <div className="lg:col-span-1">
+              <SearchAutocomplete 
+                products={products.map(p => ({ 
+                  name: p.name, 
+                  category: p.category, 
+                  price: p.price, 
+                  image: p.image 
+                }))} 
+                onSelect={(product) => {
+                  setSearchQuery(product.name);
+                  const productId = product.name.toLowerCase().replace(/\s+/g, '-');
+                  addToRecentlyViewed({
+                    id: productId,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    category: product.category,
+                  });
+                }}
+              />
+            </div>
+
             {/* Category Filter */}
             <div>
               <select
