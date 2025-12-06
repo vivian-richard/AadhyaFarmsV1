@@ -23,6 +23,7 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
     { id: 'products', label: 'Products', path: '/products' },
     { id: 'farmstay', label: 'Farm Stay', path: '/farmstay' },
     { id: 'blogs', label: 'Blogs', path: '/blogs' },
+    { id: 'faq', label: 'FAQ', path: '/faq' },
     { id: 'about', label: 'About Us', path: '/about' },
     { id: 'contact', label: 'Contact', path: '/contact' },
   ];
