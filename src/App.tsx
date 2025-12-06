@@ -10,6 +10,7 @@ import { BlogProvider } from './context/BlogContext';
 import { ReferralProvider } from './context/ReferralContext';
 import { GiftProvider } from './context/GiftContext';
 import { FarmStayProvider } from './context/FarmStayContext';
+import { FarmCreditsProvider } from './context/FarmCreditsContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Products from './components/Products';
@@ -31,6 +32,8 @@ import NewSubscription from './components/NewSubscription';
 import ReferralRewards from './components/ReferralRewards';
 import GiftsHampers from './components/GiftsHampers';
 import FarmStayBooking from './components/FarmStayBooking';
+import ComparisonCalculator from './components/ComparisonCalculator';
+import FarmCredits from './components/FarmCredits';
 import NewsletterPopup from './components/NewsletterPopup';
 import WhatsAppButton from './components/WhatsAppButton';
 import BackToTop from './components/BackToTop';
@@ -64,6 +67,8 @@ function AppContent() {
         <Route path="/rewards" element={<ReferralRewards />} />
         <Route path="/gifts" element={<GiftsHampers />} />
         <Route path="/farmstay-booking" element={<FarmStayBooking />} />
+        <Route path="/calculator" element={<ComparisonCalculator />} />
+        <Route path="/credits" element={<FarmCredits />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <NewsletterPopup />
@@ -83,7 +88,8 @@ function App() {
             <ReferralProvider>
               <GiftProvider>
                 <FarmStayProvider>
-                  <SubscriptionProvider>
+                  <FarmCreditsProvider>
+                    <SubscriptionProvider>
                     <RecentlyViewedProvider>
                   <WishlistProvider>
                     <CouponProvider>
@@ -93,7 +99,8 @@ function App() {
                     </CouponProvider>
                   </WishlistProvider>
                     </RecentlyViewedProvider>
-                  </SubscriptionProvider>
+                    </SubscriptionProvider>
+                  </FarmCreditsProvider>
                 </FarmStayProvider>
               </GiftProvider>
             </ReferralProvider>

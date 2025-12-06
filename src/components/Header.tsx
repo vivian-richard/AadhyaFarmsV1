@@ -22,6 +22,8 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
     { id: 'subscriptions', label: 'Subscriptions', path: '/subscriptions' },
     { id: 'gifts', label: 'Gifts', path: '/gifts' },
     { id: 'rewards', label: 'Rewards', path: '/rewards' },
+    { id: 'credits', label: 'Credits', path: '/credits' },
+    { id: 'calculator', label: 'Calculator', path: '/calculator' },
     { id: 'farmstay', label: 'Farm Stay', path: '/farmstay' },
     { id: 'blogs', label: 'Blogs', path: '/blogs' },
     { id: 'contact', label: 'Contact', path: '/contact' },
