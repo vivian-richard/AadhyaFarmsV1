@@ -385,10 +385,22 @@ export default function Products() {
               <ProductCardSkeleton key={index} />
             ))
           ) : (
-            currentProducts.map((product, index) => (
+            currentProducts.map((product, index) => {
+              const productId = product.name.toLowerCase().replace(/\s+/g, '-');
+              return (
             <div
               key={index}
               className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              onMouseEnter={() => {
+                // Track when user hovers over product
+                addToRecentlyViewed({
+                  id: productId,
+                  name: product.name,
+                  price: product.price,
+                  image: product.image,
+                  category: product.category,
+                });
+              }}
             >
               <div className="bg-gradient-to-br from-[#F5EFE0] to-[#E8DCC8] p-8 flex items-center justify-center h-64 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -402,7 +414,6 @@ export default function Products() {
                 {/* Wishlist Button */}
                 <button
                   onClick={() => {
-                    const productId = product.name.toLowerCase().replace(/\s+/g, '-');
                     if (isInWishlist(productId)) {
                       removeFromWishlist(productId);
                     } else {
@@ -420,7 +431,7 @@ export default function Products() {
                 >
                   <Heart
                     className={`h-6 w-6 ${
-                      isInWishlist(product.name.toLowerCase().replace(/\s+/g, '-'))
+                      isInWishlist(productId)
                         ? 'fill-red-500 text-red-500'
                         : 'text-gray-400'
                     }`}
@@ -448,16 +459,7 @@ export default function Products() {
                 {/* Add to Cart Button */}
                 <button 
                     onClick={() => {
-                      const productId = product.name.toLowerCase().replace(/\s+/g, '-');
                       addItem({
-                        id: productId,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image,
-                        category: product.category,
-                      });
-                      // Track recently viewed when adding to cart
-                      addToRecentlyViewed({
                         id: productId,
                         name: product.name,
                         price: product.price,
@@ -487,7 +489,8 @@ export default function Products() {
                   </button>
               </div>
             </div>
-          ))
+          );
+        })
         )}
         </div>
 
