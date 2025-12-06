@@ -1,4 +1,4 @@
-import { Phone, Mail, Menu, X, ShoppingCart, User, LogIn, Award } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogIn, Award, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,29 +9,53 @@ interface HeaderProps {
   setCurrentPage: (page: string) => void;
 }
 
-export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
+export default function Header({ setCurrentPage }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { totalItems } = useCart();
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   
-  const navItems = [
+  const menuStructure = [
     { id: 'home', label: 'Home', path: '/' },
     { id: 'products', label: 'Products', path: '/products' },
-    { id: 'subscriptions', label: 'Subscriptions', path: '/subscriptions' },
-    { id: 'gifts', label: 'Gifts', path: '/gifts' },
-    { id: 'rewards', label: 'Rewards', path: '/rewards' },
-    { id: 'credits', label: 'Credits', path: '/credits' },
-    { id: 'calculator', label: 'Calculator', path: '/calculator' },
-    { id: 'farmstay', label: 'Farm Stay', path: '/farmstay' },
-    { id: 'blogs', label: 'Blogs', path: '/blogs' },
-    { id: 'contact', label: 'Contact', path: '/contact' },
+    {
+      id: 'services',
+      label: 'Services',
+      items: [
+        { id: 'subscriptions', label: 'Subscriptions', path: '/subscriptions' },
+        { id: 'farmstay', label: 'Farm Stay', path: '/farmstay' },
+      ],
+    },
+    {
+      id: 'rewards',
+      label: 'Rewards & Benefits',
+      items: [
+        { id: 'rewards', label: 'Referral Rewards', path: '/rewards' },
+        { id: 'credits', label: 'Farm Credits', path: '/credits' },
+        { id: 'gifts', label: 'Gift Cards', path: '/gifts' },
+      ],
+    },
+    {
+      id: 'more',
+      label: 'More',
+      items: [
+        { id: 'calculator', label: 'Calculator', path: '/calculator' },
+        { id: 'blogs', label: 'Blogs', path: '/blogs' },
+        { id: 'contact', label: 'Contact', path: '/contact' },
+      ],
+    },
   ];
 
   const handleNavigation = (path: string, id: string) => {
     navigate(path);
     setCurrentPage(id);
+    setOpenDropdown(null);
+  };
+
+  const toggleDropdown = (id: string) => {
+    setOpenDropdown(openDropdown === id ? null : id);
   };
 
   return (
@@ -50,18 +74,64 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
             />
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavigation(item.path, item.id)}
-                className={`text-lg font-semibold transition-all duration-300 hover:text-[#D4AF37] ${
-                  location.pathname === item.path ? 'text-[#D4AF37] border-b-2 border-[#D4AF37]' : ''
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+          <nav className="hidden md:flex items-center space-x-6">
+            {menuStructure.map((item) => {
+              if ('items' in item && item.items) {
+                // Dropdown menu
+                const isActive = item.items.some(subItem => location.pathname === subItem.path);
+                return (
+                  <div 
+                    key={item.id} 
+                    className="relative group"
+                  >
+                    <button
+                      onClick={() => toggleDropdown(item.id)}
+                      onMouseEnter={() => setOpenDropdown(item.id)}
+                      className={`flex items-center gap-1 text-lg font-semibold transition-all duration-300 hover:text-[#D4AF37] ${
+                        isActive ? 'text-[#D4AF37]' : ''
+                      }`}
+                    >
+                      {item.label}
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                    {openDropdown === item.id && (
+                      <div
+                        className="absolute top-full left-0 mt-2 bg-white text-[#2D5016] rounded-lg shadow-xl py-2 min-w-[200px] z-50"
+                        onMouseLeave={() => setOpenDropdown(null)}
+                      >
+                        {item.items.map((subItem) => (
+                          <button
+                            key={subItem.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleNavigation(subItem.path, subItem.id);
+                            }}
+                            className={`w-full text-left px-4 py-3 hover:bg-[#F5EFE0] transition-colors ${
+                              location.pathname === subItem.path ? 'bg-[#F5EFE0] text-[#D4AF37] font-bold' : ''
+                            }`}
+                          >
+                            {subItem.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              } else {
+                // Regular menu item
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavigation(item.path, item.id)}
+                    className={`text-lg font-semibold transition-all duration-300 hover:text-[#D4AF37] ${
+                      location.pathname === item.path ? 'text-[#D4AF37] border-b-2 border-[#D4AF37]' : ''
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              }
+            })}
           </nav>
 
           <div className="hidden lg:flex items-center space-x-6">
@@ -118,20 +188,48 @@ export default function Header({ currentPage, setCurrentPage }: HeaderProps) {
         {mobileOpen && (
           <div className="md:hidden mt-4 bg-[#2D5016] rounded-xl shadow-lg border border-[#3D6020] overflow-hidden animate-fade-in">
             <nav className="flex flex-col divide-y divide-[#3D6020]">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    handleNavigation(item.path, item.id);
-                    setMobileOpen(false);
-                  }}
-                  className={`text-left px-6 py-4 text-sm font-semibold transition-colors hover:bg-[#3D6020] ${
-                    location.pathname === item.path ? 'text-[#D4AF37]' : 'text-[#F5EFE0]'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {menuStructure.map((item) => {
+                if ('items' in item && item.items) {
+                  // Dropdown section in mobile
+                  return (
+                    <div key={item.id} className="bg-[#3D6020] bg-opacity-30">
+                      <div className="px-6 py-3 text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
+                        {item.label}
+                      </div>
+                      {item.items.map((subItem) => (
+                        <button
+                          key={subItem.id}
+                          onClick={() => {
+                            handleNavigation(subItem.path, subItem.id);
+                            setMobileOpen(false);
+                          }}
+                          className={`w-full text-left px-6 py-3 pl-10 text-sm font-semibold transition-colors hover:bg-[#3D6020] ${
+                            location.pathname === subItem.path ? 'text-[#D4AF37]' : 'text-[#F5EFE0]'
+                          }`}
+                        >
+                          {subItem.label}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                } else {
+                  // Regular item in mobile
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        handleNavigation(item.path, item.id);
+                        setMobileOpen(false);
+                      }}
+                      className={`text-left px-6 py-4 text-sm font-semibold transition-colors hover:bg-[#3D6020] ${
+                        location.pathname === item.path ? 'text-[#D4AF37]' : 'text-[#F5EFE0]'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                }
+              })}
               <Link
                 to="/cart"
                 className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
