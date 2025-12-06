@@ -3,14 +3,16 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   User, Award, MapPin, Package, 
-  LogOut, Plus, Trash2, CheckCircle, Home, Edit, X
+  LogOut, Plus, Trash2, CheckCircle, Home, Edit, X, Truck
 } from 'lucide-react';
+import DeliveryPreferences from './DeliveryPreferences';
 
 const Profile: React.FC = () => {
   const { user, logout, updateUserProfile, addresses, addAddress, deleteAddress, setDefaultAddress, orders } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'profile' | 'addresses' | 'orders' | 'loyalty'>('profile');
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [editingDeliveryPrefs, setEditingDeliveryPrefs] = useState<string | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedProfile, setEditedProfile] = useState({
     name: user?.name || '',
@@ -478,23 +480,55 @@ const Profile: React.FC = () => {
                             {address.city}, {address.state} - <span className="font-bold">{address.pincode}</span>
                           </p>
                         </div>
-                        <div className="flex gap-2 pt-4 border-t border-gray-200">
-                          {!address.isDefault && (
-                            <button
-                              onClick={() => setDefaultAddress(address.id)}
-                              className="flex-1 px-4 py-2 border-2 border-[#2D5016] text-[#2D5016] rounded-lg hover:bg-[#2D5016] hover:text-white transition-all text-sm font-semibold"
-                            >
-                              ⭐ Set as Default
-                            </button>
-                          )}
-                          <button
-                            onClick={() => deleteAddress(address.id)}
-                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md hover:shadow-lg"
-                            title="Delete address"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
+                        {editingDeliveryPrefs === address.id ? (
+                          <div className="mt-4 pt-4 border-t border-gray-200">
+                            <DeliveryPreferences
+                              addressId={address.id}
+                              existingPreferences={address.deliveryPreferences}
+                              onSave={() => setEditingDeliveryPrefs(null)}
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            {address.deliveryPreferences && (
+                              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Truck className="h-4 w-4 text-blue-600" />
+                                  <span className="text-sm font-semibold text-blue-900">Delivery Preferences Set</span>
+                                </div>
+                                <p className="text-xs text-blue-700">
+                                  Time: {address.deliveryPreferences.timeSlot.replace('-', ' ').toUpperCase()}
+                                  {address.deliveryPreferences.earlyMorningDelivery && ' • Early Morning'}
+                                  {address.deliveryPreferences.ecoFriendlyPackaging && ' • Eco-Friendly'}
+                                </p>
+                              </div>
+                            )}
+                            <div className="flex gap-2 pt-4 border-t border-gray-200">
+                              <button
+                                onClick={() => setEditingDeliveryPrefs(address.id)}
+                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border-2 border-blue-500 text-blue-600 rounded-lg hover:bg-blue-500 hover:text-white transition-all text-sm font-semibold"
+                              >
+                                <Truck className="h-4 w-4" />
+                                Delivery Preferences
+                              </button>
+                              {!address.isDefault && (
+                                <button
+                                  onClick={() => setDefaultAddress(address.id)}
+                                  className="flex-1 px-4 py-2 border-2 border-[#2D5016] text-[#2D5016] rounded-lg hover:bg-[#2D5016] hover:text-white transition-all text-sm font-semibold"
+                                >
+                                  ⭐ Set as Default
+                                </button>
+                              )}
+                              <button
+                                onClick={() => deleteAddress(address.id)}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md hover:shadow-lg"
+                                title="Delete address"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>

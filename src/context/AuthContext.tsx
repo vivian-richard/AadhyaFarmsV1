@@ -9,7 +9,16 @@ interface User {
   createdAt: string;
 }
 
-interface Address {
+export interface DeliveryPreferences {
+  timeSlot: 'early-morning' | 'morning' | 'afternoon' | 'evening';
+  instructions?: string;
+  gateCode?: string;
+  preferredLocation?: string;
+  ecoFriendlyPackaging: boolean;
+  earlyMorningDelivery: boolean; // Before 7 AM
+}
+
+export interface Address {
   id: string;
   name: string;
   phone: string;
@@ -19,6 +28,7 @@ interface Address {
   state: string;
   pincode: string;
   isDefault: boolean;
+  deliveryPreferences?: DeliveryPreferences;
 }
 
 interface Order {
@@ -49,6 +59,7 @@ interface AuthContextType {
   updateAddress: (id: string, address: Partial<Address>) => void;
   deleteAddress: (id: string) => void;
   setDefaultAddress: (id: string) => void;
+  updateDeliveryPreferences: (addressId: string, preferences: DeliveryPreferences) => void;
   orders: Order[];
   addOrder: (order: Omit<Order, 'id' | 'date' | 'pointsEarned'>) => void;
   addLoyaltyPoints: (points: number) => void;
@@ -169,6 +180,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     })));
   };
 
+  const updateDeliveryPreferences = (addressId: string, preferences: DeliveryPreferences) => {
+    setAddresses(prev => prev.map(addr =>
+      addr.id === addressId
+        ? { ...addr, deliveryPreferences: preferences }
+        : addr
+    ));
+  };
+
   const addOrder = (orderData: Omit<Order, 'id' | 'date' | 'pointsEarned'>) => {
     const pointsEarned = Math.floor(orderData.total / 10); // 1 point per ₹10 spent
     
@@ -203,6 +222,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateAddress,
         deleteAddress,
         setDefaultAddress,
+        updateDeliveryPreferences,
         orders,
         addOrder,
         addLoyaltyPoints,
