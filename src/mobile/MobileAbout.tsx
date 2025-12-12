@@ -93,7 +93,16 @@ const MobileAbout = () => {
           color: '#fff',
           textAlign: 'center'
         }}>
-          <div style={{ fontSize: '64px', marginBottom: '16px' }}>🌾</div>
+          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+            <img 
+              src="/products/logo final 5.png" 
+              alt="Aadhya Farms" 
+              style={{ 
+                height: '80px',
+                width: 'auto'
+              }} 
+            />
+          </div>
           <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
             Aadhya Farms
           </h2>

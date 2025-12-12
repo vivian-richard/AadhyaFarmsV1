@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useState } from 'react';
 
 const MobileProductDetail = () => {
@@ -8,6 +9,7 @@ const MobileProductDetail = () => {
   const navigate = useNavigate();
   const { products } = useProducts();
   const { addItem } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
 
   const product = products?.find((p: any) => p.id === id);
@@ -15,6 +17,16 @@ const MobileProductDetail = () => {
   if (!product) {
     return <div>Product not found</div>;
   }
+
+  const inWishlist = isInWishlist(product.id);
+
+  const toggleWishlist = () => {
+    if (inWishlist) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
@@ -25,8 +37,14 @@ const MobileProductDetail = () => {
 
   return (
     <div>
-      {/* Back Button */}
-      <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--swiggy-border)' }}>
+      {/* Back Button & Wishlist */}
+      <div style={{ 
+        padding: '12px 16px', 
+        borderBottom: '1px solid var(--swiggy-border)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
         <button
           onClick={() => navigate(-1)}
           style={{
@@ -38,6 +56,19 @@ const MobileProductDetail = () => {
           }}
         >
           ←
+        </button>
+        <button
+          onClick={toggleWishlist}
+          style={{
+            border: 'none',
+            background: 'transparent',
+            fontSize: '24px',
+            cursor: 'pointer',
+            padding: '4px 8px',
+            color: inWishlist ? '#ff3d00' : '#666'
+          }}
+        >
+          {inWishlist ? '❤️' : '🤍'}
         </button>
       </div>
 

@@ -1,247 +1,414 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSubscription } from '../context/SubscriptionContext';
+import { useSubscription, DeliverySchedule } from '../context/SubscriptionContext';
+import { useAuth } from '../context/AuthContext';
 
 const MobileSubscriptions = () => {
   const navigate = useNavigate();
-  const { subscriptions, addSubscription } = useSubscription();
-  const [selectedFrequency, setSelectedFrequency] = useState<'daily' | 'weekly'>('daily');
-
-  const subscriptionPlans = [
-    {
-      id: 1,
-      name: 'Daily Milk',
-      image: '/products/Milk.png',
-      price: 70,
-      unit: '500ml',
-      frequency: 'daily',
-      description: 'Fresh A2 milk delivered every morning',
-      benefits: ['Farm fresh', 'No preservatives', 'Morning delivery', 'Pause anytime']
-    },
-    {
-      id: 2,
-      name: 'Farm Fresh Eggs',
-      image: '/products/Eggs.png',
-      price: 90,
-      unit: '6 eggs',
-      frequency: 'weekly',
-      description: 'Organic eggs from free-range chickens',
-      benefits: ['Free range', 'No antibiotics', 'High protein', 'Weekly delivery']
-    },
-    {
-      id: 3,
-      name: 'Pure Desi Ghee',
-      image: '/products/Ghee.png',
-      price: 550,
-      unit: '500ml',
-      frequency: 'weekly',
-      description: 'Handmade A2 cow ghee',
-      benefits: ['100% pure', 'Traditional method', 'Rich aroma', 'Monthly delivery']
-    },
-    {
-      id: 4,
-      name: 'Fresh Curd',
-      image: '/products/Curd.png',
-      price: 50,
-      unit: '500ml',
-      frequency: 'daily',
-      description: 'Homemade style curd',
-      benefits: ['Probiotic rich', 'No additives', 'Fresh daily', 'Healthy gut']
-    }
-  ];
-
-  const filteredPlans = subscriptionPlans.filter(
-    (plan) => plan.frequency === selectedFrequency
+  const { availableProducts, addSubscription } = useSubscription();
+  const { addresses } = useAuth();
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [deliverySchedule, setDeliverySchedule] = useState<DeliverySchedule>({
+    monday: true,
+    tuesday: true,
+    wednesday: true,
+    thursday: true,
+    friday: true,
+    saturday: true,
+    sunday: false,
+  });
+  const [startDate, setStartDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  });
+  const [selectedAddressId, setSelectedAddressId] = useState(
+    addresses.find(a => a.isDefault)?.id || addresses[0]?.id || ''
   );
 
-  const handleSubscribe = (plan: any) => {
-    addSubscription({
-      productId: plan.id,
-      productName: plan.name,
-      frequency: selectedFrequency,
-      quantity: 1,
-      price: plan.price
-    });
-    navigate('/profile');
+  const getDeliveryDaysCount = () => {
+    return Object.values(deliverySchedule).filter(Boolean).length;
   };
 
+  const toggleDay = (day: keyof DeliverySchedule) => {
+    setDeliverySchedule({ ...deliverySchedule, [day]: !deliverySchedule[day] });
+  };
+
+  const calculateDailyTotal = () => {
+    if (!selectedProduct) return 0;
+    return selectedProduct.price * quantity;
+  };
+
+  const calculateWeeklyCost = () => {
+    return calculateDailyTotal() * getDeliveryDaysCount();
+  };
+
+  const handleSubscribeClick = (product: any) => {
+    setSelectedProduct(product);
+    setQuantity(1);
+    setShowModal(true);
+  };
+
+  const handleSubmit = () => {
+    if (!selectedProduct) return;
+
+    const hasAnyDay = Object.values(deliverySchedule).some(day => day);
+    if (!hasAnyDay) {
+      alert('Please select at least one delivery day');
+      return;
+    }
+
+    if (!selectedAddressId && addresses.length > 0) {
+      alert('Please select a delivery address');
+      return;
+    }
+
+    addSubscription({
+      items: [{
+        product: selectedProduct,
+        quantity: quantity
+      }],
+      deliverySchedule,
+      startDate,
+      status: 'active',
+      totalAmount: calculateWeeklyCost(),
+      addressId: selectedAddressId,
+    });
+
+    setShowModal(false);
+    alert(`Successfully subscribed to ${selectedProduct.name}!`);
+  };
+
+  const days = [
+    { key: 'monday' as keyof DeliverySchedule, label: 'M' },
+    { key: 'tuesday' as keyof DeliverySchedule, label: 'T' },
+    { key: 'wednesday' as keyof DeliverySchedule, label: 'W' },
+    { key: 'thursday' as keyof DeliverySchedule, label: 'T' },
+    { key: 'friday' as keyof DeliverySchedule, label: 'F' },
+    { key: 'saturday' as keyof DeliverySchedule, label: 'S' },
+    { key: 'sunday' as keyof DeliverySchedule, label: 'S' },
+  ];
+
   return (
-    <div className="mobile-subscriptions">
-      <div style={{ padding: '16px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
-          Subscriptions
-        </h1>
-        <p style={{ fontSize: '14px', color: '#93959f', marginBottom: '20px' }}>
-          Subscribe and save on daily essentials
-        </p>
-
-        {/* Active Subscriptions */}
-        {subscriptions.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '12px' }}>
-              Active Subscriptions ({subscriptions.length})
-            </h3>
-            {subscriptions.map((sub) => (
-              <div
-                key={sub.id}
-                style={{
-                  background: '#fff',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  marginBottom: '12px'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: '600' }}>
-                    {sub.productName}
-                  </div>
-                  <div style={{
-                    padding: '4px 12px',
-                    background: '#e7f5e7',
-                    color: 'var(--swiggy-green)',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: '600'
-                  }}>
-                    {sub.status}
-                  </div>
-                </div>
-                <div style={{ fontSize: '13px', color: '#93959f', marginBottom: '4px' }}>
-                  Frequency: {sub.frequency}
-                </div>
-                <div style={{ fontSize: '13px', color: '#93959f' }}>
-                  Quantity: {sub.quantity} | ₹{sub.price}/{sub.frequency === 'daily' ? 'day' : 'week'}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Frequency Toggle */}
-        <div style={{
-          display: 'flex',
-          gap: '12px',
-          marginBottom: '20px',
-          background: '#f8f8f8',
-          padding: '4px',
-          borderRadius: '12px'
-        }}>
+    <div className="mobile-subscriptions" style={{ paddingBottom: '80px' }}>
+      {/* Header */}
+      <div style={{
+        position: 'sticky',
+        top: 0,
+        background: '#fff',
+        padding: '16px',
+        borderBottom: '1px solid #f0f0f0',
+        zIndex: 10
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
-            onClick={() => setSelectedFrequency('daily')}
+            onClick={() => navigate(-1)}
             style={{
-              flex: 1,
-              padding: '10px',
-              background: selectedFrequency === 'daily' ? '#fff' : 'transparent',
+              background: 'none',
               border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
+              fontSize: '24px',
               cursor: 'pointer',
-              boxShadow: selectedFrequency === 'daily' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
+              padding: '4px'
             }}
           >
-            Daily
+            ←
           </button>
-          <button
-            onClick={() => setSelectedFrequency('weekly')}
-            style={{
-              flex: 1,
-              padding: '10px',
-              background: selectedFrequency === 'weekly' ? '#fff' : 'transparent',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              boxShadow: selectedFrequency === 'weekly' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
-            }}
-          >
-            Weekly
-          </button>
+          <h1 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
+            Subscriptions
+          </h1>
         </div>
+      </div>
 
-        {/* Subscription Plans */}
-        <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '12px' }}>
-          Available Plans
-        </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {filteredPlans.map((plan) => (
+      {/* Products Grid */}
+      <div style={{ padding: '16px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: '#333' }}>
+          Available Products
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
+          {availableProducts.map((product) => (
             <div
-              key={plan.id}
+              key={product.id}
               style={{
                 background: '#fff',
-                border: '1px solid #e0e0e0',
                 borderRadius: '12px',
-                overflow: 'hidden'
+                padding: '12px',
+                display: 'flex',
+                gap: '12px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
               }}
             >
-              <div style={{ display: 'flex', padding: '16px' }}>
-                <img
-                  src={plan.image}
-                  alt={plan.name}
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    marginRight: '16px'
-                  }}
-                />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
-                    {plan.name}
-                  </div>
-                  <div style={{ fontSize: '13px', color: '#93959f', marginBottom: '8px' }}>
-                    {plan.unit} • {plan.frequency}
-                  </div>
-                  <div style={{ fontSize: '18px', fontWeight: '700', color: 'var(--farm-primary)' }}>
-                    ₹{plan.price}
-                    <span style={{ fontSize: '13px', fontWeight: '400', color: '#93959f' }}>
-                      /{plan.frequency === 'daily' ? 'day' : 'week'}
-                    </span>
-                  </div>
+              <img
+                src={product.image}
+                alt={product.name}
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '8px'
+                }}
+              />
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '4px', color: '#2D5016' }}>
+                  {product.name}
+                </h3>
+                <p style={{ fontSize: '13px', color: '#666', marginBottom: '8px' }}>
+                  {product.unit}
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '18px', fontWeight: '700', color: '#2D5016' }}>
+                    ₹{product.price}
+                  </span>
+                  <button
+                    onClick={() => handleSubscribeClick(product)}
+                    style={{
+                      background: 'linear-gradient(135deg, #2D5016 0%, #3D6020 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Subscribe
+                  </button>
                 </div>
-              </div>
-
-              {/* Benefits */}
-              <div style={{
-                background: '#f8f8f8',
-                padding: '12px 16px',
-                borderTop: '1px solid #e0e0e0'
-              }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                  {plan.benefits.map((benefit, idx) => (
-                    <div key={idx} style={{ fontSize: '12px', color: '#3d4152' }}>
-                      ✓ {benefit}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Subscribe Button */}
-              <div style={{ padding: '16px' }}>
-                <button
-                  onClick={() => handleSubscribe(plan)}
-                  style={{
-                    width: '100%',
-                    background: 'var(--farm-primary)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    fontSize: '15px',
-                    fontWeight: '700',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Subscribe Now
-                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Subscription Modal */}
+      {showModal && selectedProduct && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'flex-end'
+          }}
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#fff',
+              borderRadius: '20px 20px 0 0',
+              width: '100%',
+              maxHeight: '85vh',
+              overflowY: 'auto',
+              padding: '24px'
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#2D5016', margin: 0 }}>
+                {selectedProduct.name}
+              </h2>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  padding: '4px'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Quantity Selector */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#333', display: 'block', marginBottom: '8px' }}>
+                Quantity per day
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  style={{
+                    background: '#f0f0f0',
+                    border: 'none',
+                    borderRadius: '8px',
+                    width: '40px',
+                    height: '40px',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  −
+                </button>
+                <span style={{ fontSize: '20px', fontWeight: '700', minWidth: '40px', textAlign: 'center' }}>
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  style={{
+                    background: '#f0f0f0',
+                    border: 'none',
+                    borderRadius: '8px',
+                    width: '40px',
+                    height: '40px',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Delivery Days */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#333', display: 'block', marginBottom: '8px' }}>
+                Select Delivery Days
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px' }}>
+                {days.map((day) => (
+                  <button
+                    key={day.key}
+                    onClick={() => toggleDay(day.key)}
+                    style={{
+                      background: deliverySchedule[day.key] ? '#2D5016' : '#f0f0f0',
+                      color: deliverySchedule[day.key] ? '#fff' : '#666',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 4px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {day.label}
+                  </button>
+                ))}
+              </div>
+              <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+                {getDeliveryDaysCount()} days selected
+              </p>
+            </div>
+
+            {/* Start Date */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#333', display: 'block', marginBottom: '8px' }}>
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+
+            {/* Delivery Address */}
+            {addresses.length > 0 && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontSize: '14px', fontWeight: '600', color: '#333', display: 'block', marginBottom: '8px' }}>
+                  Delivery Address
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {addresses.map((address) => (
+                    <label
+                      key={address.id}
+                      style={{
+                        padding: '12px',
+                        border: selectedAddressId === address.id ? '2px solid #2D5016' : '1px solid #ddd',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        background: selectedAddressId === address.id ? '#f5f5f5' : '#fff'
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="address"
+                        value={address.id}
+                        checked={selectedAddressId === address.id}
+                        onChange={(e) => setSelectedAddressId(e.target.value)}
+                        style={{ marginRight: '8px' }}
+                      />
+                      <span style={{ fontSize: '14px', fontWeight: '600' }}>{address.name}</span>
+                      {address.isDefault && (
+                        <span style={{ fontSize: '11px', color: '#2D5016', marginLeft: '8px' }}>(Default)</span>
+                      )}
+                      <div style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginLeft: '24px' }}>
+                        {address.addressLine1}, {address.city}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Cost Summary */}
+            <div style={{
+              background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '14px', color: '#666' }}>Daily Cost</span>
+                <span style={{ fontSize: '14px', fontWeight: '600' }}>₹{calculateDailyTotal()}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '14px', color: '#666' }}>Delivery Days/Week</span>
+                <span style={{ fontSize: '14px', fontWeight: '600' }}>{getDeliveryDaysCount()} days</span>
+              </div>
+              <div style={{ borderTop: '1px solid #ccc', paddingTop: '8px', marginTop: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '16px', fontWeight: '700', color: '#2D5016' }}>Weekly Cost</span>
+                  <span style={{ fontSize: '18px', fontWeight: '700', color: '#2D5016' }}>₹{calculateWeeklyCost()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={handleSubmit}
+              disabled={getDeliveryDaysCount() === 0}
+              style={{
+                width: '100%',
+                background: getDeliveryDaysCount() === 0 
+                  ? '#ccc' 
+                  : 'linear-gradient(135deg, #2D5016 0%, #3D6020 100%)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '16px',
+                fontSize: '16px',
+                fontWeight: '700',
+                cursor: getDeliveryDaysCount() === 0 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Start Subscription
+            </button>
+
+            <p style={{ fontSize: '12px', color: '#666', textAlign: 'center', marginTop: '12px' }}>
+              💡 Flexible: Pause anytime, skip dates, or set vacation mode
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

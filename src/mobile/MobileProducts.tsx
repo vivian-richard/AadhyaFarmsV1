@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const MobileProducts = () => {
   const { products } = useProducts();
   const { addItem } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
   const [showSortModal, setShowSortModal] = useState(false);
@@ -161,6 +163,34 @@ const MobileProducts = () => {
                     alt={product.name}
                     className="mobile-product-card__image"
                   />
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (isInWishlist(product.id)) {
+                        removeFromWishlist(product.id);
+                      } else {
+                        addToWishlist(product);
+                      }
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    {isInWishlist(product.id) ? '❤️' : '🤍'}
+                  </button>
                 </div>
                 <div className="mobile-product-card__content">
                   <div className="mobile-product-card__name">{product.name}</div>
