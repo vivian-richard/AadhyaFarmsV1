@@ -32,6 +32,7 @@ import MobileAbout from './mobile/MobileAbout';
 import MobileBottomNav from './mobile/MobileBottomNav';
 import InstallPrompt from './mobile/InstallPrompt';
 import SplashScreen from './mobile/SplashScreen';
+import MobileWhatsAppButton from './mobile/MobileWhatsAppButton';
 import './mobile/mobile-styles.css';
 
 function MobileAppContent() {
@@ -68,6 +69,7 @@ function MobileAppContent() {
         </Routes>
       </main>
       {showBottomNav && <MobileBottomNav />}
+      <MobileWhatsAppButton />
       <InstallPrompt />
     </div>
   );
