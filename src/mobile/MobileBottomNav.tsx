@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const MobileBottomNav = () => {
   const location = useLocation();
   const { items } = useCart();
+  const { totalItems: wishlistCount } = useWishlist();
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const navItems = [
@@ -26,13 +28,14 @@ const MobileBottomNav = () => {
       label: 'Shop' 
     },
     { 
-      path: '/subscriptions', 
+      path: '/wishlist', 
       icon: (isActive: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : '#93959f'}>
-          <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : 'none'} stroke={isActive ? 'currentColor' : '#93959f'} strokeWidth="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       ),
-      label: 'Subscribe' 
+      label: 'Wishlist',
+      badge: wishlistCount > 0 ? wishlistCount : undefined
     },
     { 
       path: '/cart', 

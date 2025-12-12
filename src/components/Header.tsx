@@ -1,6 +1,7 @@
-import { Menu, X, ShoppingCart, User, LogIn, Award, ChevronDown } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogIn, Award, ChevronDown, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ export default function Header({ setCurrentPage }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { totalItems } = useCart();
+  const { totalItems: wishlistCount } = useWishlist();
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -136,6 +138,17 @@ export default function Header({ setCurrentPage }: HeaderProps) {
 
           <div className="hidden lg:flex items-center space-x-6">
             <Link 
+              to="/wishlist" 
+              className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
+            >
+              <Heart className="h-6 w-6" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+            <Link 
               to="/cart" 
               className="relative flex items-center space-x-2 hover:text-[#D4AF37] transition-colors"
             >
@@ -230,6 +243,21 @@ export default function Header({ setCurrentPage }: HeaderProps) {
                   );
                 }
               })}
+              <Link
+                to="/wishlist"
+                className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
+                onClick={() => setMobileOpen(false)}
+              >
+                <div className="flex items-center space-x-2">
+                  <Heart className="h-5 w-5" />
+                  <span>Wishlist</span>
+                </div>
+                {wishlistCount > 0 && (
+                  <span className="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-1">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
               <Link
                 to="/cart"
                 className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-[#F5EFE0] hover:bg-[#3D6020]"
