@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { AuthProvider } from './context/AuthContext';
@@ -24,6 +25,7 @@ import MobileWishlist from './mobile/MobileWishlist';
 import MobileLogin from './mobile/MobileLogin';
 import MobileBottomNav from './mobile/MobileBottomNav';
 import InstallPrompt from './mobile/InstallPrompt';
+import SplashScreen from './mobile/SplashScreen';
 import './mobile/mobile-styles.css';
 
 function MobileAppContent() {
@@ -60,6 +62,25 @@ function MobileAppContent() {
 }
 
 function MobileApp() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Check if splash was already shown in this session
+  useEffect(() => {
+    const splashShown = sessionStorage.getItem('splashShown');
+    if (splashShown) {
+      setShowSplash(false);
+    }
+  }, []);
+
+  const handleSplashFinish = () => {
+    sessionStorage.setItem('splashShown', 'true');
+    setShowSplash(false);
+  };
+
+  if (showSplash) {
+    return <SplashScreen onFinish={handleSplashFinish} />;
+  }
+
   return (
     <AuthProvider>
       <ProductProvider>

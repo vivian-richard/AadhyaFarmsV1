@@ -10,9 +10,8 @@ const MobileBottomNav = () => {
     { 
       path: '/', 
       icon: (isActive: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill={isActive ? 'currentColor' : 'none'} />
-          <polyline points="9 22 9 12 15 12 15 22" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : '#93959f'}>
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
       ),
       label: 'Home' 
@@ -20,10 +19,8 @@ const MobileBottomNav = () => {
     { 
       path: '/products', 
       icon: (isActive: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="9" cy="21" r="1" fill={isActive ? 'currentColor' : 'none'} />
-          <circle cx="20" cy="21" r="1" fill={isActive ? 'currentColor' : 'none'} />
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : '#93959f'}>
+          <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
         </svg>
       ),
       label: 'Shop' 
@@ -31,10 +28,8 @@ const MobileBottomNav = () => {
     { 
       path: '/subscriptions', 
       icon: (isActive: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="23 4 23 10 17 10" />
-          <polyline points="1 20 1 14 7 14" />
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill={isActive ? 'currentColor' : 'none'} />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : '#93959f'}>
+          <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>
         </svg>
       ),
       label: 'Subscribe' 
@@ -42,10 +37,8 @@ const MobileBottomNav = () => {
     { 
       path: '/cart', 
       icon: (isActive: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" fill={isActive ? 'currentColor' : 'none'} />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <path d="M16 10a4 4 0 0 1-8 0" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : '#93959f'}>
+          <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/>
         </svg>
       ),
       label: 'Cart', 
@@ -54,9 +47,8 @@ const MobileBottomNav = () => {
     { 
       path: '/profile', 
       icon: (isActive: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" fill={isActive ? 'currentColor' : 'none'} />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={isActive ? 'currentColor' : '#93959f'}>
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
         </svg>
       ),
       label: 'Account' 

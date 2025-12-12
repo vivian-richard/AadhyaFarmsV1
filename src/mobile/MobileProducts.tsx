@@ -110,7 +110,9 @@ const MobileProducts = () => {
             cursor: 'pointer'
           }}
         >
-          <span>🔄</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+          </svg>
           <span>Sort</span>
         </button>
         <button
@@ -130,7 +132,9 @@ const MobileProducts = () => {
             cursor: 'pointer'
           }}
         >
-          <span>⚙️</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+          </svg>
           <span>Filter</span>
         </button>
       </div>
