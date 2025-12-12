@@ -21,8 +21,11 @@ const MobileHome = () => {
     <div style={{ width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       {/* Banner */}
       <div className="mobile-home__banner">
-        <div className="mobile-home__banner-title">
-          Fresh from Farm 🌾
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
+          <img src="/logo-transparent.png" alt="Aadhya Farms" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+          <div className="mobile-home__banner-title" style={{ margin: 0 }}>
+            Fresh from Farm
+          </div>
         </div>
         <div className="mobile-home__banner-subtitle">
           100% organic products delivered daily

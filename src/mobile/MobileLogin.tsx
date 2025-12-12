@@ -86,15 +86,16 @@ const MobileLogin = () => {
           <div style={{
             width: '80px',
             height: '80px',
-            background: 'linear-gradient(135deg, var(--farm-primary) 0%, #1a3a0d 100%)',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '40px',
-            margin: '0 auto 16px'
+            margin: '0 auto 16px',
+            overflow: 'hidden',
+            background: '#fff',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
           }}>
-            🌾
+            <img src="/logo-transparent.png" alt="Aadhya Farms" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
             Welcome to Aadhya Farms

@@ -472,55 +472,6 @@ export default function Products() {
                   <div className="text-green-600 font-bold mt-2">Added!</div>
                 )}
               </div>
-                </div>
-                <div className="flex items-baseline space-x-2 mb-4">
-                  <span className="text-3xl font-bold text-[#D4AF37]">₹{product.price}</span>
-                  <span className="text-[#7A5C3C]">{product.unit}</span>
-                </div>
-                <p className="text-[#7A5C3C] leading-relaxed mb-4">{product.description}</p>
-                
-                {/* Add to Cart or Subscribe Button */}
-                {(product.name === 'Fresh Milk' || product.name === 'Fresh Curd') ? (
-                  <a
-                    href="/new-subscription"
-                    className="w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 bg-blue-600 text-white hover:bg-blue-700"
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                    <span>Subscribe Only</span>
-                  </a>
-                ) : (
-                  <button 
-                    onClick={() => {
-                      addItem({
-                        id: productId,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image,
-                        category: product.category,
-                      });
-                      setAddedToCart(product.name);
-                      setTimeout(() => setAddedToCart(null), 2000);
-                    }}
-                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
-                      addedToCart === product.name
-                        ? 'bg-green-600 text-white'
-                        : 'bg-[#2D5016] text-[#F5EFE0] hover:bg-[#3D6020]'
-                    }`}
-                  >
-                    {addedToCart === product.name ? (
-                      <>
-                        <Check className="h-5 w-5" />
-                        <span>Added to Cart</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingCart className="h-5 w-5" />
-                        <span>Add to Cart</span>
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
             </div>
           );
         })

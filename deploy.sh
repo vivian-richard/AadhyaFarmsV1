@@ -5,6 +5,23 @@ echo "Aadhya Farms - Azure Deployment Script"
 echo "======================================"
 echo ""
 
+# Check if deployment token is provided
+if [ -z "$1" ]; then
+    echo "❌ Error: Deployment token not provided"
+    echo ""
+    echo "Usage: ./deploy.sh YOUR_DEPLOYMENT_TOKEN"
+    echo ""
+    echo "Get your deployment token from:"
+    echo "1. Go to Azure Portal (https://portal.azure.com)"
+    echo "2. Open your Static Web App"
+    echo "3. Go to 'Deployment token' in the left menu"
+    echo "4. Copy the token and use it with this script"
+    echo ""
+    exit 1
+fi
+
+DEPLOYMENT_TOKEN=$1
+
 # Build the project
 echo "Step 1: Building the project..."
 npm run build
@@ -19,29 +36,26 @@ echo ""
 
 # Check if Azure Static Web Apps CLI is installed
 if ! command -v swa &> /dev/null; then
-    echo "Azure Static Web Apps CLI not found. Installing..."
+    echo "📥 Installing Azure Static Web Apps CLI..."
     npm install -g @azure/static-web-apps-cli
 fi
 
 echo ""
-echo "======================================"
-echo "Deployment Options:"
-echo "======================================"
+echo "🚀 Deploying to Azure Static Web Apps..."
 echo ""
-echo "Option 1: Deploy using Azure Static Web Apps CLI"
-echo "   Run: swa deploy ./dist --app-name aadhya-farms --env production"
-echo ""
-echo "Option 2: Manual upload to Azure Portal"
-echo "   1. Go to https://portal.azure.com"
-echo "   2. Create/Select your Static Web App"
-echo "   3. Upload the 'dist' folder contents"
-echo ""
-echo "Option 3: Use Azure CLI"
-echo "   1. Install: brew install azure-cli"
-echo "   2. Login: az login"
-echo "   3. Deploy using Azure CLI commands"
-echo ""
-echo "======================================"
-echo ""
-echo "Your built files are ready in the 'dist' folder!"
-echo ""
+
+# Deploy using the deployment token
+npx @azure/static-web-apps-cli deploy ./dist \
+    --deployment-token "$DEPLOYMENT_TOKEN" \
+    --env production
+
+if [ $? -eq 0 ]; then
+    echo ""
+    echo "✅ Deployment successful!"
+    echo "🌐 Your app should be live shortly"
+else
+    echo ""
+    echo "❌ Deployment failed"
+    exit 1
+fi
+

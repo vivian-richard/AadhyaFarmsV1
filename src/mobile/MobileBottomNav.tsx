@@ -49,7 +49,7 @@ const MobileBottomNav = () => {
         </svg>
       ),
       label: 'Cart', 
-      badge: cartCount 
+      badge: cartCount > 0 ? cartCount : undefined
     },
     { 
       path: '/profile', 
@@ -75,11 +75,11 @@ const MobileBottomNav = () => {
           >
             <span className="mobile-bottom-nav__icon">
               {item.icon(isActive)}
+              {item.badge && item.badge > 0 && (
+                <span className="mobile-bottom-nav__badge">{item.badge}</span>
+              )}
             </span>
             <span>{item.label}</span>
-            {item.badge && item.badge > 0 && (
-              <span className="mobile-bottom-nav__badge">{item.badge}</span>
-            )}
           </Link>
         );
       })}

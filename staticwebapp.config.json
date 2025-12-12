@@ -1,26 +1,96 @@
 {
+  "routes": [
+    {
+      "route": "/sw.js",
+      "headers": {
+        "Content-Type": "application/javascript",
+        "Service-Worker-Allowed": "/"
+      }
+    },
+    {
+      "route": "/manifest.json",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    {
+      "route": "/assets/*.js",
+      "headers": {
+        "Content-Type": "application/javascript",
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/assets/*.css",
+      "headers": {
+        "Content-Type": "text/css",
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/assets/*",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/products/*",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/*.png",
+      "headers": {
+        "Content-Type": "image/png"
+      }
+    },
+    {
+      "route": "/*.svg",
+      "headers": {
+        "Content-Type": "image/svg+xml"
+      }
+    }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/images/*.{png,jpg,gif,ico,svg}", "/css/*", "/js/*"]
+    "exclude": [
+      "/sw.js",
+      "/manifest.json",
+      "/icon-*.svg",
+      "/logo-transparent.png",
+      "/assets/*",
+      "/products/*",
+      "*.{css,scss,sass}",
+      "*.{js,mjs}",
+      "*.{png,jpg,jpeg,gif,svg,ico,webp}",
+      "*.{json,xml,txt,woff,woff2,ttf,eot}"
+    ]
   },
   "mimeTypes": {
     ".json": "application/json",
-    ".js": "text/javascript",
+    ".js": "application/javascript",
+    ".mjs": "application/javascript",
     ".css": "text/css",
     ".png": "image/png",
     ".jpg": "image/jpeg",
     ".jpeg": "image/jpeg",
     ".gif": "image/gif",
     ".svg": "image/svg+xml",
-    ".ico": "image/x-icon"
+    ".ico": "image/x-icon",
+    ".webp": "image/webp"
   },
   "globalHeaders": {
-    "cache-control": "public, max-age=31536000, immutable"
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY"
   },
   "responseOverrides": {
     "404": {
       "rewrite": "/index.html",
       "statusCode": 200
     }
+  },
+  "platform": {
+    "apiRuntime": "node:18"
   }
 }

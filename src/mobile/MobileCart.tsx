@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 
 const MobileCart = () => {
   const navigate = useNavigate();
-  const { items, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { items, removeItem, updateQuantity, totalPrice } = useCart();
 
   if (items.length === 0) {
     return (
@@ -48,7 +48,7 @@ const MobileCart = () => {
                   className="mobile-quantity-control__btn"
                   onClick={() => {
                     if (item.quantity === 1) {
-                      removeFromCart(item.id);
+                      removeItem(item.id);
                     } else {
                       updateQuantity(item.id, item.quantity - 1);
                     }
@@ -82,7 +82,7 @@ const MobileCart = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
             <span>Item Total</span>
-            <span>₹{cartTotal}</span>
+            <span>₹{totalPrice}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: 'var(--swiggy-green)' }}>
             <span>Delivery Fee</span>
@@ -91,7 +91,7 @@ const MobileCart = () => {
           <div style={{ borderTop: '1px dashed #d0d0d0', margin: '8px 0' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '700' }}>
             <span>To Pay</span>
-            <span>₹{cartTotal}</span>
+            <span>₹{totalPrice}</span>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ const MobileCart = () => {
       <div className="mobile-checkout-bar">
         <button className="mobile-checkout-btn" onClick={() => navigate('/payment')}>
           <span>Proceed to Checkout</span>
-          <span className="mobile-checkout-btn__amount">₹{cartTotal}</span>
+          <span className="mobile-checkout-btn__amount">₹{totalPrice}</span>
         </button>
       </div>
     </div>

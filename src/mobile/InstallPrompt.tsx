@@ -13,11 +13,28 @@ const InstallPrompt = () => {
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    // Also show prompt after 5 seconds if not dismissed and not installed
+    const timer = setTimeout(() => {
+      const isDismissed = localStorage.getItem('install-prompt-dismissed');
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+      if (!isDismissed && !isPWA) {
+        setShowPrompt(true);
+      }
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      // Show manual installation instructions
+      alert('To install this app:\n\niOS Safari: Tap the Share button (⬆️) at the bottom, then select "Add to Home Screen"\n\nAndroid Chrome: Tap the menu (⋮) then "Add to Home Screen" or "Install App"\n\nDesktop Chrome: Click the install icon (⊕) in the address bar');
+      setShowPrompt(false);
+      return;
+    }
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
