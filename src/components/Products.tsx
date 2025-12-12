@@ -395,7 +395,6 @@ export default function Products() {
               key={index}
               className="product-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
               onMouseEnter={() => {
-                // Track when user hovers over product
                 addToRecentlyViewed({
                   id: productId,
                   name: product.name,
@@ -405,59 +404,74 @@ export default function Products() {
                 });
               }}
             >
-              <div className="bg-gradient-to-br from-[#F5EFE0] to-[#E8DCC8] p-8 flex items-center justify-center h-64 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 pointer-events-none">
-                  <img src={product.image} alt="" className="h-full w-full object-cover blur-sm" />
+              {/* Swipeable carousel placeholder for mobile */}
+              <div className="product-image-carousel">
+                <div className="product-image-wrapper">
+                  <img src={product.image} alt={product.name} className="product-image" style={{ width: '100%', height: '200px', objectFit: 'contain', borderRadius: '16px' }} />
                 </div>
-                <ProductImageZoom
-                  src={product.image}
-                  alt={product.name}
-                  className="h-48 w-auto object-contain relative z-10"
-                />
-                {/* Subscription Only Badge */}
-                {(product.name === 'Fresh Milk' || product.name === 'Fresh Curd') && (
-                  <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
-                    Subscription Only
-                  </div>
-                )}
-                {/* Wishlist Button */}
-                <button
-                  onClick={() => {
-                    if (isInWishlist(productId)) {
-                      removeFromWishlist(productId);
-                    } else {
-                      addToWishlist({
-                        id: productId,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image,
-                        category: product.category,
-                      });
-                    }
-                  }}
-                  className="absolute top-4 right-4 z-20 bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
-                  aria-label="Add to wishlist"
-                >
-                  <Heart
-                    className={`h-6 w-6 ${
-                      isInWishlist(productId)
-                        ? 'fill-red-500 text-red-500'
-                        : 'text-gray-400'
-                    }`}
-                  />
-                </button>
+                {/* Add swipe/arrow controls for future enhancement */}
               </div>
-              <div className="p-6">
+              {/* Subscription Only Badge */}
+              {(product.name === 'Fresh Milk' || product.name === 'Fresh Curd') && (
+                <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                  Subscription Only
+                </div>
+              )}
+              {/* Wishlist Button */}
+              <button
+                onClick={() => {
+                  if (isInWishlist(productId)) {
+                    removeFromWishlist(productId);
+                  } else {
+                    addToWishlist({
+                      id: productId,
+                      name: product.name,
+                      price: product.price,
+                      image: product.image,
+                      category: product.category,
+                    });
+                  }
+                }}
+                className="absolute top-4 right-4 z-20 bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
+                aria-label="Add to wishlist"
+              >
+                <Heart
+                  className={`h-6 w-6 ${
+                    isInWishlist(productId)
+                      ? 'fill-red-500 text-red-500'
+                      : 'text-gray-400'
+                  }`}
+                />
+              </button>
+              <div className="p-4 mobile-product-info">
                 <div className="inline-block px-3 py-1 bg-[#F5EFE0] text-[#2D5016] rounded-full text-xs font-bold mb-3">
                   {product.category}
                 </div>
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-2xl font-bold text-[#2D5016] flex-1">{product.name}</h3>
-                  <SocialShare
-                    title={product.name}
-                    description={product.description}
-                    imageUrl={product.image}
-                  />
+                <h3 className="product-name text-lg font-bold text-[#2D5016] mb-2">{product.name}</h3>
+                <div className="product-price text-xl font-bold text-[#D4AF37] mb-2">₹{product.price} <span className="text-xs text-[#7A5C3C]">{product.unit}</span></div>
+                <p className="text-[#7A5C3C] leading-relaxed mb-2">{product.description}</p>
+                <button
+                  className="add-to-cart-btn"
+                  onClick={() => {
+                    addItem({
+                      id: productId,
+                      name: product.name,
+                      price: product.price,
+                      image: product.image,
+                      category: product.category,
+                    });
+                    setAddedToCart(productId);
+                    setTimeout(() => setAddedToCart(null), 1200);
+                  }}
+                  style={{ width: '100%', padding: '12px 0', fontSize: '16px', borderRadius: '999px', background: '#2D5016', color: '#fff', fontWeight: 700, marginTop: '8px', boxShadow: '0 2px 8px rgba(44,80,22,0.08)' }}
+                >
+                  <span style={{ marginRight: 8 }}>Add to Cart</span>
+                  🛒
+                </button>
+                {addedToCart === productId && (
+                  <div className="text-green-600 font-bold mt-2">Added!</div>
+                )}
+              </div>
                 </div>
                 <div className="flex items-baseline space-x-2 mb-4">
                   <span className="text-3xl font-bold text-[#D4AF37]">₹{product.price}</span>
