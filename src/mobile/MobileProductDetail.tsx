@@ -7,7 +7,7 @@ const MobileProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   const product = products?.find((p: any) => p.id === id);
@@ -18,7 +18,7 @@ const MobileProductDetail = () => {
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      addToCart(product);
+      addItem(product);
     }
     navigate('/cart');
   };

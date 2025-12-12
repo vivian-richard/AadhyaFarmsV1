@@ -226,6 +226,7 @@ const MobileOrders = () => {
                 }}>
                   {order.status === 'on-the-way' && (
                     <button
+                      onClick={() => navigate(`/order-tracking/${order.id}`, { state: { order } })}
                       style={{
                         flex: 1,
                         background: 'var(--farm-primary)',
@@ -243,6 +244,22 @@ const MobileOrders = () => {
                   )}
                   {order.status === 'delivered' && (
                     <>
+                      <button
+                        onClick={() => navigate(`/order-tracking/${order.id}`, { state: { order } })}
+                        style={{
+                          flex: 1,
+                          background: '#fff',
+                          color: 'var(--farm-primary)',
+                          border: '1px solid var(--farm-primary)',
+                          borderRadius: '8px',
+                          padding: '10px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        View Details
+                      </button>
                       <button
                         onClick={() => navigate('/products')}
                         style={{

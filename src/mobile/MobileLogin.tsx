@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 
 const MobileLogin = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -13,28 +13,22 @@ const MobileLogin = () => {
     password: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLogin) {
-      // Login
-      login({
-        id: '1',
-        name: formData.name || 'User',
-        email: formData.email,
-        phone: formData.phone
-      });
-    } else {
-      // Signup
-      login({
-        id: '1',
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone
-      });
+    try {
+      if (isLogin) {
+        // Login
+        await login(formData.email, formData.password);
+      } else {
+        // Signup
+        await register(formData.name, formData.email, formData.phone, formData.password);
+      }
+      
+      navigate('/profile');
+    } catch (error) {
+      console.error('Authentication failed:', error);
     }
-    
-    navigate('/profile');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,11 +39,15 @@ const MobileLogin = () => {
   };
 
   return (
-    <div className="mobile-login" style={{
+    <div style={{
       minHeight: '100vh',
       background: '#fff',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      width: '100%',
+      maxWidth: '100vw',
+      overflowX: 'hidden',
+      position: 'relative'
     }}>
       {/* Header */}
       <div style={{
