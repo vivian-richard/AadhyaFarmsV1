@@ -11,7 +11,7 @@ import SmartRecommendations from './SmartRecommendations';
 const Cart: React.FC = () => {
   const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice, addItem } = useCart();
   const { appliedCoupon, applyCoupon, removeCoupon, calculateDiscount, availableCoupons } = useCoupon();
-  const { items: wishlistItems, removeFromWishlist } = useWishlist();
+  const { items: wishlistItems, removeFromWishlist, addToWishlist } = useWishlist();
   const { recentlyViewed } = useRecentlyViewed();
   const { getFrequentlyBoughtTogether } = useProducts();
   const [activeTab, setActiveTab] = useState<'cart' | 'wishlist' | 'recently-viewed'>('cart');
@@ -29,6 +29,17 @@ const Cart: React.FC = () => {
     } else {
       setCouponError('Invalid coupon code');
     }
+  };
+
+  const handleMoveToWishlist = (item: any) => {
+    addToWishlist({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      category: item.category
+    });
+    removeItem(item.id);
   };
 
   return (
@@ -163,6 +174,14 @@ const Cart: React.FC = () => {
                       </p>
                     </div>
                   </div>
+
+                  <button
+                    onClick={() => handleMoveToWishlist(item)}
+                    className="mt-3 flex items-center gap-2 text-sm text-gray-600 hover:text-green-600 transition-colors"
+                  >
+                    <Heart className="h-4 w-4" />
+                    Move to Wishlist
+                  </button>
                 </div>
               </div>
             ))}

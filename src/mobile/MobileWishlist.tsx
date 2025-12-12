@@ -15,6 +15,8 @@ const MobileWishlist = () => {
       image: item.image,
       category: item.category || 'Dairy'
     });
+    // Remove from wishlist after adding to cart
+    removeFromWishlist(item.id);
   };
 
   if (wishlistItems.length === 0) {

@@ -1,9 +1,23 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const MobileCart = () => {
   const navigate = useNavigate();
   const { items, removeItem, updateQuantity, totalPrice } = useCart();
+  const { addToWishlist } = useWishlist();
+
+  const handleMoveToWishlist = (item: any) => {
+    addToWishlist({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      category: item.category || 'Dairy',
+      unit: item.unit
+    });
+    removeItem(item.id);
+  };
 
   if (items.length === 0) {
     return (
@@ -65,6 +79,24 @@ const MobileCart = () => {
                 </button>
               </div>
             </div>
+            <button
+              onClick={() => handleMoveToWishlist(item)}
+              style={{
+                marginTop: '8px',
+                background: 'none',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontSize: '12px',
+                color: '#666',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              ❤️ Move to Wishlist
+            </button>
           </div>
         </div>
       ))}

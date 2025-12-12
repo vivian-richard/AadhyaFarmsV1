@@ -86,6 +86,8 @@ const Wishlist: React.FC = () => {
                       image: item.image,
                       category: item.category,
                     });
+                    // Remove from wishlist after adding to cart
+                    removeFromWishlist(item.id);
                   }}
                   className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
                 >
